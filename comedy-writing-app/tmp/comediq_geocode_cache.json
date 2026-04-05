@@ -1,0 +1,146 @@
+{
+  "17 essex st  new york  ny 10002": {
+    "lat": 40.7152632,
+    "lng": -73.9901598
+  },
+  "99 macdougal st  new york  ny 10012  usa": {
+    "lat": 40.7296565,
+    "lng": -74.001091
+  },
+  "487 atlantic ave  brooklyn  ny 11217  usa": {
+    "lat": 40.6859068,
+    "lng": -73.9816185
+  },
+  "10 cooper st  brooklyn  ny 11207  usa": {
+    "lat": 40.6836915,
+    "lng": -73.9112136
+  },
+  "201 w 75th st  new york  ny 10023": {
+    "lat": 40.7807729,
+    "lng": -73.9804016
+  },
+  "99 macdougal street new york  ny 10012": {
+    "lat": 40.7296565,
+    "lng": -74.001091
+  },
+  "318 w 53rd st  new york  ny 10019  usa": {
+    "lat": 40.7644391,
+    "lng": -73.9856707
+  },
+  "107 macdougal st  new york  ny": {
+    "lat": 40.7298492,
+    "lng": -74.0008199
+  },
+  "241 e 24th st  new york  ny 10010": {
+    "lat": 40.7389213,
+    "lng": -73.9808057
+  },
+  "12 st marks pl  new york  ny": {
+    "lat": 40.9253888,
+    "lng": -73.1325868
+  },
+  "154 w  29th st   new york  ny 10001  usa": {
+    "lat": 40.7474462,
+    "lng": -73.9922022
+  },
+  "55 chrystie st new york  ny 10002": {
+    "lat": 40.7166773,
+    "lng": -73.9946785
+  },
+  "358 w 44th st  new york  ny 10036  usa": {
+    "lat": 40.7595017,
+    "lng": -73.9914437
+  },
+  "709 lorimer st  brooklyn  ny 11211  usa": {
+    "lat": 40.7180926,
+    "lng": -73.9502883
+  },
+  "1118 1st ave  new york  ny 10065": {
+    "lat": 40.7610441,
+    "lng": -73.960624
+  },
+  "243 w 54th st  new york  ny": {
+    "lat": 40.7645366,
+    "lng": -73.9833266
+  },
+  "12 grattan st  brooklyn  ny 11206  usa": {
+    "lat": 40.7052293,
+    "lng": -73.9326664
+  },
+  "27 16 23rd ave  astoria  ny 11105  usa": {
+    "lat": 40.775548,
+    "lng": -73.9149401
+  },
+  "790 metropolitan ave  brooklyn  ny 11211  usa": {
+    "lat": 40.7145615,
+    "lng": -73.9425485
+  },
+  "27 16 23rd ave  astoria  ny 11105": {
+    "lat": 40.775548,
+    "lng": -73.9149401
+  },
+  "15 vandam st  new york  ny 10013  usa": {
+    "lat": 40.726577,
+    "lng": -74.0043574
+  },
+  "116 e 16th st  new york  ny 10003": {
+    "lat": 40.7353379,
+    "lng": -73.988463
+  },
+  "1114 dekalb ave  brooklyn  ny 11221  usa": {
+    "lat": 40.6937282,
+    "lng": -73.9298594
+  },
+  "1739 amsterdam ave  new york  ny 10031  usa": {
+    "lat": 40.8259371,
+    "lng": -73.9468664
+  },
+  "1241 halsey st  new york  new york 11237": {
+    "lat": 40.6939773,
+    "lng": -73.9073961
+  },
+  "241 east 24th street  new york  ny 10010": {
+    "lat": 40.7389213,
+    "lng": -73.9808057
+  },
+  "76 e 1st st  new york  ny 10009": {
+    "lat": 40.7232734,
+    "lng": -73.9881258
+  },
+  "415 classon ave  brooklyn  ny 11238": {
+    "lat": 40.686831,
+    "lng": -73.9593734
+  },
+  "1568 2nd ave  new york  ny 10028  usa": {
+    "lat": 40.7748581,
+    "lng": -73.9536956
+  },
+  "406 3rd ave  brooklyn  ny 11215  usa": {
+    "lat": 40.6732561,
+    "lng": -73.9897416
+  },
+  "259 melrose st  brooklyn  ny 11206  usa": {
+    "lat": 40.702,
+    "lng": -73.9299503
+  },
+  "447 e 13th st  new york  ny 10009": {
+    "lat": 40.7299744,
+    "lng": -73.9811697
+  },
+  "362 grand st  brooklyn  ny 11211  usa": {
+    "lat": 40.7122084,
+    "lng": -73.9557789
+  },
+  "172 rivington st  new york  ny 10002  usa": {
+    "lat": 40.7191128,
+    "lng": -73.9845243
+  },
+  "308 hooper st  brooklyn  ny 11211  usa": {
+    "lat": 40.7073204,
+    "lng": -73.9537223
+  },
+  "268 lenox ave": {
+    "lat": 37.8117252,
+    "lng": -122.2576316
+  }
+}

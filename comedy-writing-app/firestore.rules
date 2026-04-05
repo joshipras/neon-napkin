@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isWorkspaceKey(workspaceKey) {
+      return workspaceKey.matches('^[a-f0-9]{64}$');
+    }
+
+    function isValidPairingCode(code) {
+      return code.matches('^[A-Z2-9]{8}$');
+    }
+
+    match /workspaces/{workspaceKey}/appData/{documentId} {
+      allow read, write: if isWorkspaceKey(workspaceKey) && documentId == 'jokes';
+    }
+
+    match /pairingCodes/{code} {
+      allow read: if isValidPairingCode(code)
+        && resource.data.expiresAtMs is int
+        && resource.data.expiresAtMs > request.time.toMillis();
+
+      allow create, update: if isValidPairingCode(code)
+        && request.resource.data.workspaceKey is string
+        && isWorkspaceKey(request.resource.data.workspaceKey)
+        && request.resource.data.expiresAtMs is int
+        && request.resource.data.expiresAtMs > request.time.toMillis()
+        && request.resource.data.expiresAtMs < request.time.toMillis() + 20 * 60 * 1000;
+
+      allow delete: if isValidPairingCode(code);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

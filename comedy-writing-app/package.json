@@ -1,0 +1,38 @@
+{
+  "name": "comedy-writing-app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "build:web": "expo export --platform web && node scripts/prepare-hosting.js",
+    "deploy:web": "firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~6.1.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "^54.0.0",
+    "expo-av": "~16.0.8",
+    "expo-constants": "~18.0.13",
+    "expo-crypto": "~15.0.8",
+    "expo-file-system": "~19.0.21",
+    "expo-location": "~19.0.8",
+    "firebase": "^12.11.0",
+    "leaflet": "^1.9.4",
+    "qrcode": "^1.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "^0.21.2",
+    "react-native-webview": "13.15.0"
+  },
+  "devDependencies": {
+    "@colors/colors": "^1.6.0",
+    "firebase-tools": "^15.12.0",
+    "playwright-core": "^1.58.2"
+  }
+}

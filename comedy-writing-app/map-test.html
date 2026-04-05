@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NYC Open Mics — Test Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    #map { height: 100%; }
+    .info-panel {
+      position: absolute; top: 10px; left: 10px; background: white; padding: 12px 16px;
+      border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 400; max-width: 300px;
+      font-size: 14px;
+    }
+    .info-panel h3 { margin-bottom: 8px; color: #333; }
+    .info-panel p { margin: 4px 0; color: #666; }
+    .popup-content { font-size: 12px; }
+    .popup-content strong { display: block; margin-bottom: 4px; }
+    .popup-content p { margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="info-panel">
+    <h3 id="todayLabel">Today's Mics</h3>
+    <p id="micCount">Loading...</p>
+  </div>
+
+  <script>
+    const NYC = [40.7128, -74.0060];
+    
+    function initMap() {
+      const map = L.map('map').setView(NYC, 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+      }).addTo(map);
+      return map;
+    }
+
+    function getWeekdayName(date) {
+      return ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][date.getDay()];
+    }
+
+    async function loadMapsToday() {
+      try {
+        console.log('Fetching open_mics.json...');
+        const res = await fetch('./src/data/open_mics.json');
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const mics = await res.json();
+        console.log('Loaded mics:', mics.length);
+        
+        const today = new Date();
+        const weekday = getWeekdayName(today);
+        console.log('Today is:', weekday);
+        
+        const todayMics = mics.filter(m => m.active && m.days.includes(weekday));
+        console.log('Today mics:', todayMics.length);
+
+        document.getElementById('todayLabel').textContent = `Today (${weekday}) — ${todayMics.length} mics`;
+        document.getElementById('micCount').innerHTML = todayMics.length 
+          ? `<strong>${todayMics.length} open mic${todayMics.length !== 1 ? 's' : ''} found</strong><br>Click markers for details.`
+          : 'No mics today. Try another day!';
+
+        const map = initMap();
+        
+        todayMics.forEach(mic => {
+          const popup = `
+            <div class="popup-content">
+              <strong>${mic.venueName}</strong>
+              <p><strong>Address:</strong> ${mic.venueAddress}</p>
+              <p><strong>Time:</strong> ${mic.signUpTimes.map(s => s.start).join(', ')}</p>
+              <p><strong>Signup:</strong> ${mic.signUpTimes[0]?.method}</p>
+              <p>${mic.signupDetails}</p>
+              <p><strong>Tags:</strong> ${mic.tags.join(', ')}</p>
+            </div>
+          `;
+          L.marker([mic.coordinates.lat, mic.coordinates.lng]).bindPopup(popup).addTo(map);
+        });
+      } catch (e) {
+        console.error('Error:', e);
+        document.getElementById('micCount').innerHTML = `<strong>Error:</strong><br>${e.message}`;
+      }
+    }
+
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', loadMapsToday);
+  </script>
+</body>
+</html>

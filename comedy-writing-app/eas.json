@@ -1,0 +1,46 @@
+{
+  "cli": {
+    "version": ">= 18.4.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_NAME": "On Deck: Joke Writing & Mics",
+        "APP_SLUG": "comedy-writing",
+        "APP_SCHEME": "comedywriting",
+        "APP_BUNDLE_IDENTIFIER": "com.comedywriting.app",
+        "EAS_PROJECT_ID": "aac3137f-732c-4c3b-8f51-a5d86081d92d"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "APP_NAME": "On Deck: Joke Writing & Mics",
+        "APP_SLUG": "comedy-writing",
+        "APP_SCHEME": "comedywriting",
+        "APP_BUNDLE_IDENTIFIER": "com.comedywriting.app",
+        "EAS_PROJECT_ID": "aac3137f-732c-4c3b-8f51-a5d86081d92d"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "APP_NAME": "On Deck: Joke Writing & Mics",
+        "APP_SLUG": "comedy-writing",
+        "APP_SCHEME": "comedywriting",
+        "APP_BUNDLE_IDENTIFIER": "com.comedywriting.app",
+        "EAS_PROJECT_ID": "aac3137f-732c-4c3b-8f51-a5d86081d92d"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6755918191"
+      }
+    }
+  }
+}

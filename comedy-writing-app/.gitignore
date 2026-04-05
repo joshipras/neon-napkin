@@ -1,0 +1,6 @@
+.expo/
+.firebase/
+node_modules/
+dist/
+.env
+*.log

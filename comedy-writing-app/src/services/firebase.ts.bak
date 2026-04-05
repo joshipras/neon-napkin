@@ -1,0 +1,49 @@
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
+import { getAuth, type Auth } from 'firebase/auth';
+
+type FirebaseConfig = {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+  measurementId?: string;
+};
+
+function getFirebaseConfig(): FirebaseConfig {
+  // @ts-ignore
+  const extra = Constants.expoConfig?.extra as any;
+  const cfg = extra?.firebase as FirebaseConfig | undefined;
+  if (!cfg || !cfg.apiKey) {
+    throw new Error('Missing Firebase configuration. Please set expo.extra.firebase in app.json.');
+  }
+  return cfg;
+}
+
+function getNativeAuthModule(): any {
+  try {
+    // Prefer the React Native entry when available
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require('firebase/auth/react-native');
+  } catch {
+    // Fallback to web module methods (getAuth)
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require('firebase/auth');
+  }
+}
+
+const firebaseConfig = getFirebaseConfig();
+const app: FirebaseApp = initializeApp(firebaseConfig);
+const auth: Auth = getAuth(app);
+
+const db: Firestore = getFirestore(app);
+const storage: FirebaseStorage = getStorage(app);
+
+export { app, auth, db, storage };
+
+

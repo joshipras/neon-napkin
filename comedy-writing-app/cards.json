@@ -1,0 +1,225 @@
+[
+  {
+    "id": "gpu-1",
+    "question": "How would you design a GPU scheduler for multi-tenant distributed training jobs to maximize cluster utilization while preventing OOMs?",
+    "intuition": "Balance making GPUs busy with avoiding runs that run out of memory — schedule smaller jobs together and reserve memory for large ones.",
+    "interview_answer": "Use a hybrid scheduler: profile jobs to know peak memory and perf; pack compatible jobs (heterogeneous-memory packing) with soft memory limits, prioritize preemption points, and enforce graceful eviction. Combine gang-scheduling for synchronized distributed jobs and opportunistic filling for single-GPU jobs, plus backpressure from a centralized allocator to prevent OOMs.",
+    "real_world_example": "Kubernetes + Volcano-like gang scheduling with a memory-aware bin packer used in multi-tenant GPU clusters.",
+    "common_pitfall": "Proposing only FIFO or only packing without thinking about large distributed jobs that need whole gangs — leads to starvation or OOMs.",
+    "category": "Large-Scale Optimization",
+    "difficulty": "hard",
+    "unlockDay": 1
+  },
+  {
+    "id": "gpu-2",
+    "question": "Explain dynamic batching for inference servers and the trade-offs involved.",
+    "intuition": "Accumulate requests up to a size or time limit to run one big GPU batch — faster throughput but added latency.",
+    "interview_answer": "Dynamic batching groups small inference requests into larger GPU batches to improve throughput; tune max batch size and max wait time to balance throughput vs tail latency, and use adaptive batching based on recent arrival rates to avoid wasted compute and elevated P99 latency.",
+    "real_world_example": "NVIDIA Triton and custom batching queues implement adaptive timeouts and batch breakers to hit SLOs.",
+    "common_pitfall": "Optimizing only for throughput and ignoring P95/P99 latency SLOs or not handling heterogeneous model input shapes.",
+    "category": "Large-Scale Optimization",
+    "difficulty": "medium",
+    "unlockDay": 1
+  },
+  {
+    "id": "gpu-3",
+    "question": "How do you design preemption for long-running training jobs to allow higher-priority jobs to run?",
+    "intuition": "Save progress cheaply and resume later; preempt at safe checkpoints.",
+    "interview_answer": "Implement coordinated checkpoint-aware preemption: require jobs to register safe preemption points, support incremental checkpointing, and use low-priority spot instances for reversible workloads. Use estimator-based prediction to pick preemption windows to minimize wasted computation.",
+    "real_world_example": "Cloud spot VMs + training frameworks that support periodic checkpointing and resume from checkpoints.",
+    "common_pitfall": "Suggesting instant kill with no checkpoints causing wasted GPU hours and model divergence.",
+    "category": "Large-Scale Optimization",
+    "difficulty": "hard",
+    "unlockDay": 2
+  },
+  {
+    "id": "gpu-4",
+    "question": "What metrics would you collect to decide when to scale up GPU serving for a model?",
+    "intuition": "Track latency, queue length, GPU utilization, and request rate together.",
+    "interview_answer": "Use a mix of request rate, queue depth, P95/P99 latency, GPU utilization, and cold-start counts. Scale based on latency SLO breaches and sustained queue growth; use predictive autoscaling with short-term forecasting for bursty traffic.",
+    "real_world_example": "Autoscalers that add replicas when P95 > SLO for N seconds and sustained CPU/GPU utilization > threshold.",
+    "common_pitfall": "Relying solely on average latency or utilization which can mask tail latency issues.",
+    "category": "Large-Scale Optimization",
+    "difficulty": "easy",
+    "unlockDay": 2
+  },
+  {
+    "id": "gpu-5",
+    "question": "How would you reduce communication overhead in data-parallel training across many GPUs?",
+    "intuition": "Compress gradients and arrange communication to minimize synchronization costs.",
+    "interview_answer": "Use gradient compression (quantization, sparsification), overlap computation with all-reduce, hierarchical communication trees, and asynchronous or stale-synchronous updates carefully. Choose compression schemes with bounded error and compensate with error-feedback for training stability.",
+    "real_world_example": "Megatron-LM and tensor-parallel libraries use optimized NCCL all-reduce trees and gradient accumulation to reduce communication frequency.",
+    "common_pitfall": "Suggesting aggressive lossy compression without error feedback causing training instability.",
+    "category": "Large-Scale Optimization",
+    "difficulty": "medium",
+    "unlockDay": 3
+  },
+
+  {
+    "id": "rlhf-1",
+    "question": "Outline a robust RLHF loop for aligning a language model with human preferences.",
+    "intuition": "Collect human labels, train a reward model, then fine-tune policy using RL with constraints to avoid drift.",
+    "interview_answer": "Collect diverse human comparisons, fit a calibrated reward model with cross-validation, use policy optimization (PPO) with KL penalties to the original policy, and run offline evaluation + human spot checks. Monitor reward hacking and distribution shift; use regularization and conservative updates.",
+    "real_world_example": "Fine-tuning a chat model with human preference comparisons and PPO while clamping KL to base LM to preserve helpfulness.",
+    "common_pitfall": "Not guarding against reward model overfitting or distribution shift which leads to reward hacking.",
+    "category": "Stochastic Processes & Markov Chains",
+    "difficulty": "hard",
+    "unlockDay": 1
+  },
+  {
+    "id": "rlhf-2",
+    "question": "How do you handle off-policy data when updating a policy with human preference rewards?",
+    "intuition": "Correct for the fact that data was collected by a different policy — importance-weight or use conservative updates.",
+    "interview_answer": "Use importance sampling with variance reduction, or prefer on-policy updates; alternatively use conservative policy iteration and constrain updates (small KL) to reduce bias from off-policy data. Validate with held-out human comparisons.",
+    "real_world_example": "Using replay buffers with importance weights or limiting replay to near-policy examples in RLHF pipelines.",
+    "common_pitfall": "Naively training on all historical data without correction, causing policy collapse.",
+    "category": "Stochastic Processes & Markov Chains",
+    "difficulty": "medium",
+    "unlockDay": 2
+  },
+  {
+    "id": "rlhf-3",
+    "question": "Explain credit assignment in RLHF when the action space is language tokens.",
+    "intuition": "It's hard to know which token caused a reward; use temporal credit assignment and baselines.",
+    "interview_answer": "Use episode-level rewards with advantage estimation and token-level baselines; apply reward shaping carefully and use truncated backpropagation or per-token reward models to improve credit assignment. Keep variance low with baselines and entropy regularization.",
+    "real_world_example": "Token-level reward models or using reward-to-go for sequence training in language models.",
+    "common_pitfall": "Assigning reward to every token equally leading to noisy updates.",
+    "category": "Stochastic Processes & Markov Chains",
+    "difficulty": "hard",
+    "unlockDay": 3
+  },
+  {
+    "id": "rlhf-4",
+    "question": "When would you include a KL penalty in PPO for RLHF and how do you set it?",
+    "intuition": "Use KL to keep policy from diverging too far from the pretrained model; tune to tradeoff reward vs safety.",
+    "interview_answer": "Include a KL penalty whenever you risk deviating from base behavior (to avoid catastrophic forgetting or reward hacking). Set it based on validation: increase until target KL or safety metrics are satisfied, or use dynamic clipping to maintain stable updates.",
+    "real_world_example": "PPO with a KL coefficient tuned to keep policy close to the supervised LM baseline during RLHF.",
+    "common_pitfall": "Fixing a KL coefficient without validation leading to under- or over-constrained updates.",
+    "category": "Stochastic Processes & Markov Chains",
+    "difficulty": "medium",
+    "unlockDay": 4
+  },
+  {
+    "id": "rlhf-5",
+    "question": "How can Markov properties be used to simplify sequential human feedback modeling?",
+    "intuition": "Assume next state depends only on current state/action to make models tractable.",
+    "interview_answer": "Model human feedback as an MDP where rewards depend on recent context; exploit Markov assumptions to use value functions and dynamic programming for estimation, while expanding state to include necessary context when true Markov property is weak.",
+    "real_world_example": "Using MDP framing for dialogue turns where the state includes recent turns and system signals.",
+    "common_pitfall": "Blindly assuming Markovness with too-small state leading to poor policy learning.",
+    "category": "Stochastic Processes & Markov Chains",
+    "difficulty": "easy",
+    "unlockDay": 5
+  },
+
+  {
+    "id": "opt-1",
+    "question": "Contrast convex vs non-convex optimization behavior for deep nets and what interviewers expect you to know.",
+    "intuition": "Convex problems have one optimum; non-convex have many minima and saddles — SGD behaves differently.",
+    "interview_answer": "Explain that convex problems guarantee global optima and predictable convergence rates; deep networks are non-convex with many saddle points and local minima. Interviewers expect you to discuss SGD noise helping escape saddles, role of overparameterization, and practical heuristics like momentum, learning-rate schedules, and batch size tradeoffs.",
+    "real_world_example": "Choosing Adam + LR warmup and cosine decay for transformer training to avoid unstable plateaus.",
+    "common_pitfall": "Reciting math about convexity without connecting to SGD behavior or practical training tricks.",
+    "category": "Convex vs Non-Convex Optimization",
+    "difficulty": "medium",
+    "unlockDay": 1
+  },
+  {
+    "id": "opt-2",
+    "question": "Why does increasing batch size often require adjusting learning rate?",
+    "intuition": "Larger batches reduce gradient noise; you can increase LR to compensate or risk slowing convergence.",
+    "interview_answer": "Because gradient variance drops with batch size, you can scale learning rate (linear or square-root rules) to maintain effective step sizes; but very large batches may harm generalization and require longer training or different regularization.",
+    "real_world_example": "Large-scale training uses LR scaling (linear) and warmup to stabilize training on big batches.",
+    "common_pitfall": "Assuming larger batches always speed convergence without adjusting LR or steps per epoch.",
+    "category": "Convex vs Non-Convex Optimization",
+    "difficulty": "easy",
+    "unlockDay": 2
+  },
+  {
+    "id": "opt-3",
+    "question": "How do saddle points affect training dynamics and what practical fixes exist?",
+    "intuition": "Saddles slow or stall gradient descent; noise and momentum help pass them.",
+    "interview_answer": "Saddle points have zero gradient but are not minima; SGD noise and momentum push the iterates away. Practical fixes include adding noise, using SGD rather than deterministic optimizers, second-order methods in small scale, and appropriate LR schedules.",
+    "real_world_example": "Using momentum and warm restarts when a model plateaus during large-scale training.",
+    "common_pitfall": "Recommending expensive second-order methods for massive models without acknowledging scale limits.",
+    "category": "Convex vs Non-Convex Optimization",
+    "difficulty": "medium",
+    "unlockDay": 3
+  },
+  {
+    "id": "opt-4",
+    "question": "Describe a diagnostics checklist when a large model fails to converge.",
+    "intuition": "Check data, LR, scaling, gradient magnitudes, and batching first.",
+    "interview_answer": "Check data pipeline, normalization, label correctness, initial LR and warmup, gradient clipping, batch size effects, weight initialization, and check for exploding/vanishing gradients. Run small-scale tests and reproducible runs to isolate cause.",
+    "real_world_example": "A bad tokenizer causing garbage inputs and divergence — fixed by inspecting samples and validation loss behavior.",
+    "common_pitfall": "Tinkering with optimizer without validating data integrity.",
+    "category": "Convex vs Non-Convex Optimization",
+    "difficulty": "hard",
+    "unlockDay": 4
+  },
+  {
+    "id": "opt-5",
+    "question": "When should you prefer adaptive optimizers like Adam over SGD with momentum?",
+    "intuition": "Use Adam for fast convergence with noisy gradients or sparse features; SGD often generalizes better long-term.",
+    "interview_answer": "Use Adam when fast convergence and per-parameter adaptivity matters (e.g., small datasets or sparse gradients); prefer SGD+momentum for large-scale training where generalization matters, possibly starting with Adam then switching to SGD for final tuning.",
+    "real_world_example": "Researchers often start with AdamW for pretraining then fine-tune with SGD in some domains.",
+    "common_pitfall": "Saying Adam is always better; misses generalization trade-offs.",
+    "category": "Convex vs Non-Convex Optimization",
+    "difficulty": "medium",
+    "unlockDay": 5
+  },
+
+  {
+    "id": "graph-1",
+    "question": "Design a scheduler for a DAG-based data pipeline with heterogeneous task durations and resource constraints.",
+    "intuition": "Topologically order tasks, prioritize critical path, and schedule by resource availability with backpressure.",
+    "interview_answer": "Compute the DAG's critical path to prioritize tasks that unlock the most downstream work, use resource-aware earliest-start scheduling, and implement backpressure with queue limits. Support retries, checkpoints, and speculative execution for stragglers.",
+    "real_world_example": "Airflow/Argo-style DAGs with worker pools, priority weights, and backpressure on input queues.",
+    "common_pitfall": "Proposing simple FIFO workers that ignore dependencies and critical path effects.",
+    "category": "Graph Theory & Network Flows",
+    "difficulty": "hard",
+    "unlockDay": 1
+  },
+  {
+    "id": "graph-2",
+    "question": "How would you detect and handle bottlenecks in a streaming pipeline with multiple stages?",
+    "intuition": "Measure per-stage latency and queue lengths; add capacity or apply windowing where needed.",
+    "interview_answer": "Instrument per-stage throughput and lag, identify high-lag stages, apply autoscaling, shard states to parallelize, and introduce batching or downsampling. Use backpressure propagation to upstream producers to avoid unbounded queues.",
+    "real_world_example": "Kafka consumer lag monitoring + scaling consumers or re-partitioning topics.",
+    "common_pitfall": "Scaling downstream before measuring if bottleneck is due to skewed keys or slow stateful transforms.",
+    "category": "Graph Theory & Network Flows",
+    "difficulty": "medium",
+    "unlockDay": 2
+  },
+  {
+    "id": "graph-3",
+    "question": "Explain how max-flow/min-cut can help with capacity planning in a distributed inference system.",
+    "intuition": "Model servers and links as graph with capacities; bottlenecks show up as cuts.",
+    "interview_answer": "Represent components and network links as capacities in a flow graph; compute min-cut to find worst-case bottlenecks and reason about re-allocating capacity or adding redundancy to increase throughput under peak demand.",
+    "real_world_example": "Sizing API gateways and server clusters to avoid a cut that limits requests per second.",
+    "common_pitfall": "Treating the system as homogeneous and ignoring bursty arrival patterns or variability.",
+    "category": "Graph Theory & Network Flows",
+    "difficulty": "medium",
+    "unlockDay": 3
+  },
+  {
+    "id": "graph-4",
+    "question": "How do you schedule tasks that have resource co-location constraints (e.g., GPU + NVMe)?",
+    "intuition": "Treat constraints as placement requirements and use bin-packing with heuristic scoring.",
+    "interview_answer": "Encode co-location constraints in the scheduler's resource vector and use heuristic bin-packing with scoring for affinity/anti-affinity. Add soft constraints for best-effort placement and fallbacks when strict placement isn't available.",
+    "real_world_example": "Schedulers that place data-local tasks on nodes with NVMe cache for faster I/O.",
+    "common_pitfall": "Ignoring anti-affinity leading to noisy neighbors and degraded performance.",
+    "category": "Graph Theory & Network Flows",
+    "difficulty": "hard",
+    "unlockDay": 4
+  },
+  {
+    "id": "graph-5",
+    "question": "What is backpressure and how does it relate to flow control in pipelines?",
+    "intuition": "When downstream can't keep up, upstream should slow down to avoid infinite buffering.",
+    "interview_answer": "Backpressure is a flow-control mechanism where downstream congestion signals upstream to slow production, preventing unbounded buffers. Implement via credit-based systems, windowed acks, or queue limits with retries and circuit breakers.",
+    "real_world_example": "HTTP/2 flow-control windows and reactive streams implementations that apply backpressure.",
+    "common_pitfall": "Buffering infinitely and hoping autoscaling will fix the problem without identifying the real bottleneck.",
+    "category": "Graph Theory & Network Flows",
+    "difficulty": "easy",
+    "unlockDay": 5
+  }
+]
