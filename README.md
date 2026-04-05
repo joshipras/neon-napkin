@@ -40,6 +40,7 @@ For now, the repo intentionally has one project folder:
 ```text
 neon-napkin/
 ├── comedy-writing-app/
+├── virtual-guitar-web/
 ├── init-neon-napkin.sh
 └── README.md
 ```
@@ -58,6 +59,7 @@ Later on, more sibling folders can join the party for finance tools, utility bui
 This repo currently leans on:
 
 - `Expo` and `React Native` for app concepts
+- `Vite` and `React` for fast mobile-web prototypes
 - `React Native Web` for browser-friendly experiments
 - `Firebase` for quick backend and hosting support
 - plain old JavaScript when speed matters more than ceremony
@@ -77,6 +79,14 @@ cd comedy-writing-app
 npm run ios
 npm run build:web
 npm run deploy:web
+```
+
+Or jump into the virtual guitar prototype:
+
+```bash
+cd virtual-guitar-web
+npm install
+npm run dev:host
 ```
 
 ## Working Rules

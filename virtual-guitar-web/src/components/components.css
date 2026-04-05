@@ -1,0 +1,303 @@
+.camera-panel,
+.control-panel,
+.status-card {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  border-radius: 1.6rem;
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(14px);
+}
+
+.camera-panel {
+  padding: 1rem;
+}
+
+.camera-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.3rem;
+  aspect-ratio: 9 / 16;
+  background:
+    radial-gradient(circle at top, rgba(247, 183, 51, 0.16), transparent 25%),
+    linear-gradient(180deg, rgba(9, 19, 31, 0.68), rgba(9, 19, 31, 0.92));
+}
+
+.camera-feed,
+.camera-fallback,
+.camera-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.camera-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.camera-fallback {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.camera-overlay {
+  pointer-events: none;
+}
+
+.detection-zone {
+  position: absolute;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  transform: translate(-50%, -50%);
+}
+
+.detection-zone span {
+  position: absolute;
+  top: -1.4rem;
+  left: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.neck-zone {
+  background: var(--neck-zone);
+}
+
+.strum-zone {
+  background: var(--string-zone);
+}
+
+.guitar-neck,
+.guitar-body {
+  position: absolute;
+}
+
+.guitar-neck {
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 240, 213, 0.3), transparent 30%),
+    linear-gradient(90deg, rgba(65, 43, 35, 0.95), rgba(134, 92, 68, 0.92));
+  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.18);
+}
+
+.guitar-frets {
+  position: absolute;
+  inset: 14% 3%;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 6%,
+    var(--fret-line) 6%,
+    var(--fret-line) 7%,
+    transparent 7%,
+    transparent 13%
+  );
+  background-size: 13% 100%;
+}
+
+.guitar-body {
+  border-radius: 46% 44% 40% 45%;
+  background:
+    radial-gradient(circle at 34% 38%, rgba(255, 225, 156, 0.55), transparent 20%),
+    linear-gradient(180deg, #ffbe26, var(--guitar-body));
+  box-shadow:
+    inset 0 -1rem 1.4rem rgba(145, 75, 0, 0.2),
+    0 1rem 2.5rem rgba(0, 0, 0, 0.22);
+}
+
+.sound-hole {
+  position: absolute;
+  width: 18%;
+  height: 18%;
+  left: 38%;
+  top: 34%;
+  border-radius: 50%;
+  background: rgba(66, 32, 20, 0.65);
+}
+
+.pickups {
+  position: absolute;
+  width: 26%;
+  height: 11%;
+  left: 38%;
+  top: 56%;
+  border-radius: 999px;
+  background: rgba(80, 94, 113, 0.88);
+  box-shadow:
+    -2.4rem -0.55rem 0 rgba(80, 94, 113, 0.88),
+    0 0.15rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.overlay-badges {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.38rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(11, 24, 49, 0.65);
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+}
+
+.badge.accent {
+  background: rgba(247, 183, 51, 0.24);
+}
+
+.badge.live {
+  background: rgba(135, 249, 161, 0.18);
+}
+
+.badge.error {
+  background: rgba(255, 113, 104, 0.2);
+}
+
+.stage-caption {
+  margin-top: 0.9rem;
+  color: var(--text-muted);
+}
+
+.control-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.control-group {
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+}
+
+.control-label,
+.mini-label,
+.control-help {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.control-help {
+  line-height: 1.35;
+}
+
+.primary-button,
+.segment,
+.strum-button,
+select {
+  min-height: 3rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--button);
+  color: var(--text);
+  padding: 0.75rem 0.9rem;
+}
+
+.primary-button:hover,
+.segment:hover,
+.strum-button:hover,
+select:hover {
+  background: var(--button-hover);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, rgba(247, 183, 51, 0.9), rgba(255, 112, 94, 0.85));
+  color: #16120d;
+  font-weight: 700;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.segment.active {
+  background: rgba(119, 217, 199, 0.26);
+  border-color: rgba(119, 217, 199, 0.55);
+}
+
+.strum-buttons {
+  grid-column: span 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.status-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.status-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-summary {
+  color: var(--text-soft);
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 0;
+}
+
+.status-grid dt {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-grid dd {
+  margin: 0.2rem 0 0;
+}
+
+.rule-card {
+  padding: 0.95rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.rule-card p {
+  margin-top: 0.45rem;
+  color: var(--text-soft);
+}
+
+.rule-card ul {
+  margin: 0.85rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--text-soft);
+}
+
+@media (max-width: 860px) {
+  .control-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .strum-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .status-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

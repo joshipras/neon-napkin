@@ -1,0 +1,98 @@
+:root {
+  --bg: #09131f;
+  --bg-2: #13273f;
+  --panel: rgba(7, 19, 34, 0.86);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --panel-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --text: #f6f3eb;
+  --text-soft: #c9d6df;
+  --text-muted: #93a9b8;
+  --accent: #f7b733;
+  --accent-2: #77d9c7;
+  --danger: #ff7168;
+  --good: #87f9a1;
+  --button: rgba(255, 255, 255, 0.08);
+  --button-hover: rgba(255, 255, 255, 0.16);
+  --string-zone: rgba(255, 183, 51, 0.22);
+  --neck-zone: rgba(119, 217, 199, 0.2);
+  --guitar-body: #f7a400;
+  --guitar-neck: #7d5a47;
+  --fret-line: rgba(255, 241, 220, 0.55);
+  --sans:
+    'Avenir Next', 'Trebuchet MS', 'Gill Sans', 'Segoe UI', sans-serif;
+  --display:
+    'Avenir Next Condensed', 'Arial Narrow', 'Franklin Gothic Medium',
+    sans-serif;
+  --mono: 'SFMono-Regular', 'Cascadia Code', Consolas, monospace;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, rgba(247, 183, 51, 0.12), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(119, 217, 199, 0.18), transparent 30%),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+  font: 17px/1.45 var(--sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 80%);
+}
+
+#root {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+button,
+select {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  letter-spacing: -0.02em;
+}
+
+button {
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  :root {
+    font-size: 15px;
+  }
+}

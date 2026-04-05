@@ -1,0 +1,51 @@
+.app-shell {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.25rem;
+}
+
+.hero-panel {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.9fr);
+  align-items: start;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.35rem;
+  border-radius: 1.6rem;
+  border: 1px solid var(--panel-border);
+  background:
+    radial-gradient(circle at top right, rgba(248, 172, 89, 0.25), transparent 35%),
+    linear-gradient(145deg, rgba(11, 24, 49, 0.94), rgba(17, 54, 56, 0.86));
+  box-shadow: var(--panel-shadow);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-2);
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero-text {
+  max-width: 52ch;
+  color: var(--text-soft);
+}
+
+@media (max-width: 860px) {
+  .hero-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell {
+    padding: 0.9rem;
+  }
+
+  .hero-copy {
+    padding: 1rem;
+  }
+}
