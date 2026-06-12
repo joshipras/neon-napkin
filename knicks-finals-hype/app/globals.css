@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #071b33;
+  --blue: #006bb6;
+  --orange: #f58426;
+  --cream: #fff8ef;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--navy);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--cream);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(0, 107, 182, 0.38), transparent 34rem),
+    linear-gradient(180deg, #071b33 0%, #04101f 55%, #020811 100%);
+  font-family: Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stadium-lights {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.32) 0 1px, transparent 1.5px),
+    linear-gradient(90deg, transparent 49.8%, rgba(255, 255, 255, 0.035) 50%, transparent 50.2%);
+  background-size: 29px 29px, 100% 100%;
+  mask-image: linear-gradient(to bottom, black, transparent 68%);
+}
+
+.court-lines {
+  background:
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(245, 132, 38, 0.08) 50%, transparent calc(50% + 1px)),
+    radial-gradient(circle at 50% 100%, transparent 0 72px, rgba(245, 132, 38, 0.07) 73px 74px, transparent 75px);
+}
+
+.score-text {
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 32px rgba(255, 255, 255, 0.12);
+}
+
+.display-type {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-stretch: condensed;
+  letter-spacing: -0.025em;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#071b33"/>
+  <circle cx="256" cy="256" r="178" fill="#006bb6" stroke="#f58426" stroke-width="24"/>
+  <path d="M84 258h344M256 80c-54 44-82 103-82 176s28 132 82 176M256 80c54 44 82 103 82 176s-28 132-82 176" fill="none" stroke="#f58426" stroke-width="16"/>
+  <path d="M104 168c43 25 94 38 152 38s109-13 152-38M104 344c43-25 94-38 152-38s109 13 152 38" fill="none" stroke="#f58426" stroke-width="16"/>
+  <path d="M121 229h270v86H121z" fill="#071b33" stroke="#fff8ef" stroke-width="8"/>
+  <text x="256" y="291" fill="#fff8ef" font-family="Arial Black,Arial,sans-serif" font-size="62" font-weight="900" text-anchor="middle">NYK</text>
+</svg>

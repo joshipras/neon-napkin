@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" rx="36" fill="#071b33"/>
+  <circle cx="90" cy="90" r="61" fill="#006bb6" stroke="#f58426" stroke-width="9"/>
+  <rect x="39" y="73" width="102" height="35" fill="#071b33" stroke="#fff8ef" stroke-width="3"/>
+  <text x="90" y="98" fill="#fff8ef" font-family="Arial Black,Arial,sans-serif" font-size="24" font-weight="900" text-anchor="middle">NYK</text>
+</svg>

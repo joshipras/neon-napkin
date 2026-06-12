@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#071b33"/>
+  <circle cx="256" cy="256" r="154" fill="#006bb6" stroke="#f58426" stroke-width="22"/>
+  <path d="M102 256h308M256 102c-47 39-71 90-71 154s24 115 71 154M256 102c47 39 71 90 71 154s-24 115-71 154" fill="none" stroke="#f58426" stroke-width="14"/>
+  <rect x="135" y="218" width="242" height="76" fill="#071b33" stroke="#fff8ef" stroke-width="7"/>
+  <text x="256" y="273" fill="#fff8ef" font-family="Arial Black,Arial,sans-serif" font-size="56" font-weight="900" text-anchor="middle">NYK</text>
+</svg>
