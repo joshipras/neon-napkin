@@ -59,6 +59,70 @@ a {
   letter-spacing: -0.025em;
 }
 
+.route-bullet {
+  display: inline-grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.subway-tile {
+  background-color: #f3f0e8;
+  background-image:
+    linear-gradient(rgba(7, 27, 51, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7, 27, 51, 0.05) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+.subway-map-line {
+  position: relative;
+}
+
+.subway-map-line::before {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  left: 0.75rem;
+  height: 0.35rem;
+  content: "";
+  background: #fccc0a;
+  border: 2px solid #111;
+  transform: translateY(-50%);
+}
+
+.subway-stop {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  border: 3px solid #111;
+  border-radius: 9999px;
+  color: #111;
+  background: #f3f0e8;
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.subway-stop-current {
+  color: white;
+  background: #006bb6;
+  box-shadow: 0 0 0 4px rgba(0, 107, 182, 0.2);
+}
+
+.subway-stop-passed,
+.subway-stop-correct {
+  color: white;
+  background: #111;
+}
+
 .hide-scrollbar {
   scrollbar-width: none;
 }

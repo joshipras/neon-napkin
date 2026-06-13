@@ -1,5 +1,10 @@
 const CACHE_NAME = "nyk-after-dark-v1";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/icon-192.png"];
+const BASE_URL = self.registration.scope;
+const APP_SHELL = [
+  BASE_URL,
+  `${BASE_URL}manifest.webmanifest`,
+  `${BASE_URL}icon-192.png`,
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -27,6 +32,8 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/"))),
+      .catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match(BASE_URL)),
+      ),
   );
 });

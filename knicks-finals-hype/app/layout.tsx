@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "NYK After Dark | Finals Hype & Vibe Game",
   description:
-    "A simulated Knicks Finals scoreboard and interactive game-night companion.",
+    "A live Knicks scoreboard and interactive game-night companion.",
   applicationName: "NYK After Dark",
   appleWebApp: {
     capable: true,
@@ -14,10 +14,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "./icon.svg", type: "image/svg+xml" },
+      { url: "./icon-192.png", sizes: "192x192", type: "image/png" },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: "./apple-touch-icon.png",
   },
 };
 
