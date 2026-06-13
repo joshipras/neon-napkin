@@ -45,9 +45,11 @@ type ScoreTeam = {
   teamName: string;
   teamTricode: string;
   score: number;
+  seriesRecord: string;
 };
 
 type EspnCompetitor = {
+  id: string;
   homeAway: "home" | "away";
   score: string;
   team: {
@@ -72,6 +74,11 @@ type EspnEvent = {
   competitions: Array<{
     competitors: EspnCompetitor[];
     notes?: Array<{ headline?: string }>;
+    series?: {
+      summary?: string;
+      totalCompetitions?: number;
+      competitors?: Array<{ id: string; wins: number }>;
+    };
   }>;
 };
 
@@ -183,7 +190,15 @@ const rules: VibeRule[] = [
   },
 ];
 
-function mapScoreTeam(team: EspnCompetitor): ScoreTeam {
+function mapScoreTeam(
+  team: EspnCompetitor,
+  series?: EspnEvent["competitions"][number]["series"],
+): ScoreTeam {
+  const seriesWins =
+    series?.competitors?.find((competitor) => competitor.id === team.id)?.wins ?? 0;
+  const opponentWins =
+    series?.competitors?.find((competitor) => competitor.id !== team.id)?.wins ?? 0;
+
   return {
     teamCity: team.team.location,
     teamName: team.team.name,
@@ -194,6 +209,7 @@ function mapScoreTeam(team: EspnCompetitor): ScoreTeam {
           ? "SAS"
           : team.team.abbreviation,
     score: Number(team.score || 0),
+    seriesRecord: `${seriesWins}-${opponentWins}`,
   };
 }
 
@@ -219,10 +235,10 @@ function mapScoreboard(data: { events?: EspnEvent[] }): GameState | null {
     gameClock: event.status.displayClock,
     gameTimeUTC: event.date,
     gameLabel: headline || "NBA game",
-    seriesText: headline,
+    seriesText: competition.series?.summary ?? headline,
     period: event.status.period,
-    homeTeam: mapScoreTeam(home),
-    awayTeam: mapScoreTeam(away),
+    homeTeam: mapScoreTeam(home, competition.series),
+    awayTeam: mapScoreTeam(away, competition.series),
   };
 }
 
@@ -230,9 +246,7 @@ export function GameNight() {
   const [game, setGame] = useState<GameState | null>(null);
   const [scoreLoading, setScoreLoading] = useState(true);
   const [scoreError, setScoreError] = useState(false);
-  const [scoreUpdatedAt, setScoreUpdatedAt] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
-  const [zeroProof, setZeroProof] = useState(false);
   const [hits, setHits] = useState<Record<string, number>>({});
   const [lastHit, setLastHit] = useState<string | null>(null);
   const [activeGame, setActiveGame] = useState<"vibe" | "trivia">("vibe");
@@ -248,7 +262,6 @@ export function GameNight() {
         if (!response.ok) throw new Error("Score unavailable");
         const data = (await response.json()) as { events?: EspnEvent[] };
         setGame(mapScoreboard(data));
-        setScoreUpdatedAt(new Date().toISOString());
         setScoreError(false);
       } catch {
         setScoreError(true);
@@ -333,20 +346,11 @@ export function GameNight() {
             >
               {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
             </button>
-            <div className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-300 sm:flex">
-              <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-emerald-300" />
-              {game?.gameStatus === 2 ? "NBA Live" : "NBA Score Feed"}
-            </div>
           </div>
         </div>
       </header>
 
       <section className="relative z-10 mx-auto max-w-6xl px-4 pb-9 pt-6 sm:px-6 sm:pt-10">
-        <div className="mb-4 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.24em] text-white/45 sm:hidden">
-          <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-emerald-300" />
-          {game?.gameStatus === 2 ? "NBA Live" : "NBA Score Feed"}
-        </div>
-
         <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#061528]/80 shadow-2xl shadow-black/30 backdrop-blur">
           <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-4 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/50 sm:px-7">
             <span className="flex items-center gap-2">
@@ -361,6 +365,7 @@ export function GameNight() {
               abbreviation="NYK"
               city="New York"
               score={knicksTeam?.score}
+              record={knicksTeam?.seriesRecord}
               accent
             />
 
@@ -384,20 +389,13 @@ export function GameNight() {
                       : "FINAL"
                     : "—"}
               </span>
-              <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
-                {scoreUpdatedAt
-                  ? `Checked ${new Date(scoreUpdatedAt).toLocaleTimeString([], {
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}`
-                  : "Live scoreboard data"}
-              </span>
             </div>
 
             <Team
               abbreviation={opponentTeam?.teamTricode || "OPP"}
               city={opponentTeam?.teamCity || "Opponent"}
               score={opponentTeam?.score}
+              record={opponentTeam?.seriesRecord}
             />
           </div>
 
@@ -483,7 +481,7 @@ export function GameNight() {
                 <p className="mt-1 flex items-center gap-1.5 text-lg font-black">
                   <Flame size={17} className="text-knicks-orange" fill="currentColor" />
                   {vibePercent >= 100
-                    ? "Garden shaking"
+                    ? "Free Drink!"
                     : vibePercent >= 65
                       ? "Unhinged"
                       : vibePercent >= 40
@@ -491,28 +489,6 @@ export function GameNight() {
                         : "Heating up"}
                 </p>
               </div>
-            <button
-              type="button"
-              onClick={() => setZeroProof((value) => !value)}
-              className={`flex items-center gap-3 rounded-full border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition ${
-                zeroProof
-                  ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-200"
-                  : "border-white/10 bg-black/20 text-white/65"
-              }`}
-            >
-              <span>{zeroProof ? "Zero-proof mode" : "Classic mode"}</span>
-              <span
-                className={`relative h-5 w-9 rounded-full transition ${
-                  zeroProof ? "bg-emerald-400" : "bg-white/15"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition ${
-                    zeroProof ? "left-[18px]" : "left-0.5"
-                  }`}
-                />
-              </span>
-            </button>
             </div>
             <div className="mt-4">
               <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
@@ -523,12 +499,12 @@ export function GameNight() {
               </div>
               <div className="mt-2 flex justify-between text-[9px] font-bold uppercase tracking-widest text-white/30">
                 <span>{totalHits} calls logged</span>
-                <span>Garden shaking</span>
+                <span>Free Drink!</span>
               </div>
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {rules.map((rule) => {
               const Icon = rule.icon;
               const count = hits[rule.id] ?? 0;
@@ -539,7 +515,7 @@ export function GameNight() {
                   key={rule.id}
                   type="button"
                   onClick={() => triggerRule(rule)}
-                  className={`group relative min-h-36 overflow-hidden rounded-xl border p-4 text-left transition duration-200 active:scale-[0.98] ${
+                  className={`group relative min-h-28 overflow-hidden rounded-xl border p-3 text-left transition duration-200 active:scale-[0.98] sm:min-h-32 sm:p-4 ${
                     isActive
                       ? "border-knicks-orange bg-knicks-orange/15"
                       : "border-white/10 bg-[#0b213a]/80 hover:-translate-y-0.5 hover:border-white/25 hover:bg-[#0e2948]"
@@ -561,13 +537,11 @@ export function GameNight() {
                       {count > 0 ? `Hit ×${count}` : `+${rule.points} vibe`}
                     </span>
                   </div>
-                  <p className="mt-5 pr-7 text-base font-black leading-tight">
+                  <p className="mt-3 pr-5 text-sm font-black leading-tight sm:text-base">
                     {rule.title}
                   </p>
-                  <p className="mt-1 text-xs text-white/45">
-                    {zeroProof
-                      ? rule.detail.replace(/sips?|drink/gi, "water break")
-                      : rule.detail}
+                  <p className="mt-1 text-[10px] leading-snug text-white/45 sm:text-xs">
+                    {rule.detail}
                   </p>
                   <ChevronRight
                     size={17}
@@ -601,7 +575,7 @@ export function GameNight() {
                 <Trophy size={30} />
               </span>
               <h2 className="display-type mt-5 text-5xl uppercase">
-                Garden Shaking
+                Free Drink!
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-white/65">
                 First person to show this screen gets a drink bought by the group.
@@ -650,11 +624,13 @@ function Team({
   abbreviation,
   city,
   score,
+  record,
   accent = false,
 }: {
   abbreviation: string;
   city: string;
   score?: number;
+  record?: string;
   accent?: boolean;
 }) {
   return (
@@ -678,6 +654,9 @@ function Team({
           }`}
         >
           {score ?? "—"}
+        </span>
+        <span className="mt-1 block text-[10px] font-black tracking-[0.16em] text-white/45 sm:text-xs">
+          ({record ?? "—"})
         </span>
       </div>
     </div>
