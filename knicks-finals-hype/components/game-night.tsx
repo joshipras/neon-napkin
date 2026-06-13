@@ -8,7 +8,6 @@ import {
   CircleDot,
   Eye,
   Flame,
-  GlassWater,
   Hand,
   Info,
   Map,
@@ -16,7 +15,6 @@ import {
   Radio,
   RotateCcw,
   ShieldCheck,
-  Sparkles,
   Star,
   Ticket,
   Trophy,
@@ -27,6 +25,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { CommercialTrivia } from "@/components/commercial-trivia";
 import { KnicksSocial } from "@/components/knicks-social";
+import { SpotifyPlayer } from "@/components/spotify-player";
 
 type GameState = {
   gameId: string;
@@ -184,34 +183,6 @@ const rules: VibeRule[] = [
   },
 ];
 
-function getCommentary(game: GameState | null) {
-  if (!game) {
-    return "No Knicks game is showing on today’s NBA feed. Trivia Express is still running.";
-  }
-  const knicks =
-    game.homeTeam.teamTricode === "NYK" ? game.homeTeam : game.awayTeam;
-  const opponent =
-    game.homeTeam.teamTricode === "NYK" ? game.awayTeam : game.homeTeam;
-  const margin = knicks.score - opponent.score;
-
-  if (game.gameStatus === 2 && Math.abs(margin) <= 3) {
-    return "One possession. Eight million people holding the same breath.";
-  }
-  if (margin <= -12) {
-    return `Trailing by ${Math.abs(margin)}, but hey, it’s nothing a little MSG magic can’t fix. Remember ’94?`;
-  }
-  if (margin < 0) {
-    return `Down ${Math.abs(margin)}. In New York, that’s not a deficit. That’s dramatic structure.`;
-  }
-  if (margin >= 12) {
-    return `Up ${margin}. The subway ride home just got significantly louder.`;
-  }
-  if (margin >= 5) {
-    return `Knicks by ${margin}. Somewhere on Seventh Avenue, a car horn is already celebrating.`;
-  }
-  return "Tighter than a rush-hour 6 train. Protect the ball and trust the Garden.";
-}
-
 function mapScoreTeam(team: EspnCompetitor): ScoreTeam {
   return {
     teamCity: team.team.location,
@@ -301,7 +272,6 @@ export function GameNight() {
     [hits],
   );
   const vibePercent = Math.min(100, 12 + vibePoints * 3);
-  const commentary = getCommentary(game);
   const knicksTeam = game
     ? game.homeTeam.teamTricode === "NYK"
       ? game.homeTeam
@@ -338,7 +308,7 @@ export function GameNight() {
       <div className="court-lines pointer-events-none absolute inset-0" />
 
       <header className="relative z-10 border-b border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:flex-nowrap sm:px-6">
           <a className="flex items-center gap-3" href="#" aria-label="NYK After Dark home">
             <span className="grid h-9 w-9 rotate-3 place-items-center rounded-sm bg-knicks-orange text-knicks-navy shadow-glow">
               <span className="display-type -rotate-3 text-lg">NY</span>
@@ -353,7 +323,8 @@ export function GameNight() {
             </span>
           </a>
 
-          <div className="flex items-center gap-2">
+          <div className="order-3 flex w-full min-w-0 items-center justify-end gap-2 sm:order-none sm:w-auto">
+            <SpotifyPlayer />
             <button
               type="button"
               onClick={() => setMuted((value) => !value)}
@@ -430,21 +401,6 @@ export function GameNight() {
             />
           </div>
 
-          <div className="border-t border-white/10 bg-white/[0.035] px-4 py-5 sm:px-7">
-            <div className="flex gap-3">
-              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-knicks-orange/15 text-knicks-orange">
-                <Sparkles size={15} />
-              </span>
-              <div key={commentary} className="animate-rise">
-                <p className="text-[9px] font-black uppercase tracking-[0.24em] text-knicks-orange">
-                  Garden Intel
-                </p>
-                <p className="mt-1 max-w-2xl text-sm font-semibold leading-relaxed text-white/75 sm:text-base">
-                  {commentary}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="mx-auto mt-8 max-w-4xl">
@@ -468,7 +424,7 @@ export function GameNight() {
                   activeGame === "vibe" ? "bg-white/10" : "hover:bg-white/5"
                 }`}
               >
-                <span className="route-bullet bg-knicks-orange text-white">7</span>
+                <span className="route-bullet bg-[#B933AD] text-white">7</span>
                 <span>
                   <span className="block text-sm font-black">Vibe Local</span>
                   <span className="block text-[9px] font-bold uppercase tracking-wider text-white/40">
@@ -518,22 +474,27 @@ export function GameNight() {
             </button>
           </div>
 
-          <div className="mb-5 overflow-hidden rounded-xl border border-white/10 bg-white/[0.045] p-4 sm:flex sm:items-center sm:justify-between sm:gap-6">
-            <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-knicks-blue text-white">
-                <GlassWater size={19} />
-              </div>
+          <div className="mb-5 rounded-xl border border-knicks-orange/20 bg-gradient-to-r from-knicks-orange/10 to-knicks-blue/10 p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-black">Choose your game mode</p>
-                <p className="text-xs text-white/45">
-                  Every cue works with water, soda, or your drink of choice.
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                  Current status
+                </p>
+                <p className="mt-1 flex items-center gap-1.5 text-lg font-black">
+                  <Flame size={17} className="text-knicks-orange" fill="currentColor" />
+                  {vibePercent >= 100
+                    ? "Garden shaking"
+                    : vibePercent >= 65
+                      ? "Unhinged"
+                      : vibePercent >= 40
+                        ? "Electric"
+                        : "Heating up"}
                 </p>
               </div>
-            </div>
             <button
               type="button"
               onClick={() => setZeroProof((value) => !value)}
-              className={`mt-4 flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-black transition sm:mt-0 sm:w-auto sm:min-w-44 ${
+              className={`flex items-center gap-3 rounded-full border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition ${
                 zeroProof
                   ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-200"
                   : "border-white/10 bg-black/20 text-white/65"
@@ -552,6 +513,19 @@ export function GameNight() {
                 />
               </span>
             </button>
+            </div>
+            <div className="mt-4">
+              <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-knicks-blue to-knicks-orange transition-all duration-500"
+                  style={{ width: `${vibePercent}%` }}
+                />
+              </div>
+              <div className="mt-2 flex justify-between text-[9px] font-bold uppercase tracking-widest text-white/30">
+                <span>{totalHits} calls logged</span>
+                <span>Garden shaking</span>
+              </div>
+            </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -602,49 +576,6 @@ export function GameNight() {
                 </button>
               );
             })}
-          </div>
-
-          <div className="mt-5 rounded-xl border border-knicks-orange/20 bg-gradient-to-r from-knicks-orange/10 to-knicks-blue/10 p-4 sm:flex sm:items-center sm:gap-6 sm:p-5">
-            <div className="flex items-center justify-between sm:w-44 sm:shrink-0">
-              <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
-                  Current status
-                </p>
-                <p className="mt-1 flex items-center gap-1.5 text-lg font-black">
-                  <Flame size={17} className="text-knicks-orange" fill="currentColor" />
-                  {vibePercent >= 100
-                    ? "Garden shaking"
-                    : vibePercent >= 65
-                      ? "Unhinged"
-                      : vibePercent >= 40
-                        ? "Electric"
-                        : "Heating up"}
-                </p>
-              </div>
-              <span className="display-type text-3xl text-knicks-orange sm:hidden">
-                {totalHits}
-              </span>
-            </div>
-            <div className="mt-3 flex-1 sm:mt-0">
-              <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-knicks-blue to-knicks-orange transition-all duration-500"
-                  style={{ width: `${vibePercent}%` }}
-                />
-              </div>
-              <div className="mt-2 flex justify-between text-[9px] font-bold uppercase tracking-widest text-white/30">
-                <span>Pre-game</span>
-                <span>Garden shaking</span>
-              </div>
-            </div>
-            <div className="hidden text-center sm:block">
-              <span className="display-type block text-4xl leading-none text-knicks-orange">
-                {totalHits}
-              </span>
-              <span className="text-[8px] font-black uppercase tracking-widest text-white/35">
-                Calls logged
-              </span>
-            </div>
           </div>
 
           <div className="mt-6 flex items-start gap-2.5 rounded-lg border border-white/5 bg-black/20 p-3 text-[10px] leading-relaxed text-white/35">
