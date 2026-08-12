@@ -78,6 +78,22 @@ class WhatsAppNotificationProvider(NotificationProvider):
         return f"https://graph.facebook.com/{version}/{phone_number_id}/messages"
 
 
+class PushoverNotificationProvider(NotificationProvider):
+    messages_url = "https://api.pushover.net/1/messages.json"
+
+    def __init__(self, settings: Settings, client: httpx.Client | None = None) -> None:
+        self.settings = settings
+        self.client = client or httpx.Client(timeout=20)
+
+    def send_alert(self, listing: TicketListing, alert_type: AlertType) -> None:
+        if not self.settings.pushover_enabled:
+            return
+        payload = build_pushover_payload(listing, alert_type, self.settings)
+        response = self.client.post(self.messages_url, data=payload)
+        if response.status_code >= 400:
+            raise NotificationError(f"Pushover API error {response.status_code}: {response.text[:300]}")
+
+
 class NotificationManager:
     def __init__(self, providers: list[NotificationProvider]) -> None:
         self.providers = providers
@@ -99,9 +115,30 @@ def build_notifier(settings: Settings) -> NotificationManager:
         providers.append(EmailNotificationProvider(settings))
     if settings.whatsapp_enabled or settings.alert_provider in {"whatsapp", "both", "all"}:
         providers.append(WhatsAppNotificationProvider(settings))
+    if settings.pushover_enabled or settings.alert_provider in {"pushover", "both", "all"}:
+        providers.append(PushoverNotificationProvider(settings))
     if not providers:
         providers.append(ConsoleNotificationProvider())
     return NotificationManager(providers)
+
+
+def build_pushover_payload(
+    listing: TicketListing,
+    alert_type: AlertType,
+    settings: Settings,
+) -> dict:
+    payload = {
+        "token": settings.pushover_app_token,
+        "user": settings.pushover_user_key,
+        "title": _pushover_title(listing, alert_type),
+        "message": _pushover_message(listing, alert_type),
+        "url": listing.purchase_url,
+        "url_title": "Buy tickets",
+        "priority": str(settings.pushover_priority),
+    }
+    if settings.pushover_device:
+        payload["device"] = settings.pushover_device
+    return payload
 
 
 def build_whatsapp_template_payload(
@@ -200,3 +237,25 @@ def _format_whatsapp_lounge_status(listing: TicketListing, alert_type: AlertType
 
 def _text_param(value: str) -> dict:
     return {"type": "text", "text": value}
+
+
+def _pushover_title(listing: TicketListing, alert_type: AlertType) -> str:
+    prefix = "Yankees lounge deal" if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL else "Yankees premium deal"
+    return f"{prefix}: ${listing.effective_price} Sec {listing.section or 'Unknown'}"
+
+
+def _pushover_message(listing: TicketListing, alert_type: AlertType) -> str:
+    price = _format_whatsapp_price(listing)
+    lounge = _format_whatsapp_lounge_status(listing, alert_type)
+    return "\n".join(
+        [
+            alert_type.title,
+            f"Yankees vs {listing.opponent}",
+            _format_game_time(listing),
+            f"Section {listing.section or 'Unknown'}, Row {listing.row or 'Unknown'}",
+            price,
+            lounge,
+            f"Marketplace: {listing.provider}",
+            "Verify ticket benefits before purchasing.",
+        ]
+    )[:1024]

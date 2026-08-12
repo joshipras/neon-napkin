@@ -111,9 +111,32 @@ SMTP_USE_TLS=true
 
 Secrets are read from `.env` and are never logged.
 
+## Pushover Alerts
+
+Pushover is the simplest recommended notification path for scheduled checks. It uses an official HTTPS API with an app token and your user key; no OAuth, no approved message templates, and no WhatsApp Business setup.
+
+Create a Pushover application in your Pushover dashboard, then set:
+
+```env
+ALERT_PROVIDER=pushover
+PUSHOVER_ENABLED=true
+PUSHOVER_APP_TOKEN=...
+PUSHOVER_USER_KEY=...
+PUSHOVER_DEVICE=
+PUSHOVER_PRIORITY=0
+```
+
+`PUSHOVER_DEVICE` is optional. Leave it blank to send to all active devices on your Pushover account.
+
+Test locally:
+
+```bash
+yankees-watch test-alert
+```
+
 ## WhatsApp Alerts
 
-WhatsApp alerts use Meta's official WhatsApp Cloud API. For scheduled alerts that start a conversation, WhatsApp generally requires an approved message template and an opted-in recipient. The app sends a template message rather than trying to automate WhatsApp Web or bypass platform rules.
+WhatsApp is still supported, but Pushover is easier for this personal alert workflow. WhatsApp alerts use Meta's official WhatsApp Cloud API. For scheduled alerts that start a conversation, WhatsApp generally requires an approved message template and an opted-in recipient. The app sends a template message rather than trying to automate WhatsApp Web or bypass platform rules.
 
 Example local config:
 
@@ -167,9 +190,8 @@ The workflow runs every 5 minutes, which is the shortest supported GitHub Action
 Add these GitHub repository secrets:
 
 ```text
-WHATSAPP_ACCESS_TOKEN
-WHATSAPP_PHONE_NUMBER_ID
-WHATSAPP_TO
+PUSHOVER_APP_TOKEN
+PUSHOVER_USER_KEY
 ```
 
 Optional marketplace secrets:
@@ -189,9 +211,8 @@ MAX_PRICE=30
 TARGET_SECTIONS=317,318,319,320,321
 REQUIRE_CONFIRMED_LOUNGE=false
 REALERT_PRICE_DROP=5
-WHATSAPP_TEMPLATE_NAME=yankees_ticket_alert
-WHATSAPP_TEMPLATE_LANGUAGE=en_US
-WHATSAPP_GRAPH_API_VERSION=v23.0
+PUSHOVER_DEVICE=
+PUSHOVER_PRIORITY=0
 ```
 
 The workflow restores and saves the SQLite `data/` directory with the GitHub Actions cache so duplicate-alert suppression can survive across scheduled runs. GitHub cache persistence is good enough for a personal MVP, but it is not a permanent database.

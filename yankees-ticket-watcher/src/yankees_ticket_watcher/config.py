@@ -63,6 +63,11 @@ class Settings:
     whatsapp_template_name: str = "yankees_ticket_alert"
     whatsapp_template_language: str = "en_US"
     whatsapp_graph_api_version: str = "v23.0"
+    pushover_enabled: bool = False
+    pushover_app_token: str | None = None
+    pushover_user_key: str | None = None
+    pushover_device: str | None = None
+    pushover_priority: int = 0
 
 
 def load_settings(env_file: str | Path | None = ".env") -> Settings:
@@ -101,6 +106,11 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         whatsapp_template_name=values.get("WHATSAPP_TEMPLATE_NAME", "yankees_ticket_alert").strip(),
         whatsapp_template_language=values.get("WHATSAPP_TEMPLATE_LANGUAGE", "en_US").strip(),
         whatsapp_graph_api_version=values.get("WHATSAPP_GRAPH_API_VERSION", "v23.0").strip(),
+        pushover_enabled=_bool(values, "PUSHOVER_ENABLED", False),
+        pushover_app_token=_optional(values.get("PUSHOVER_APP_TOKEN")),
+        pushover_user_key=_optional(values.get("PUSHOVER_USER_KEY")),
+        pushover_device=_optional(values.get("PUSHOVER_DEVICE")),
+        pushover_priority=_int(values, "PUSHOVER_PRIORITY", 0),
     )
     _validate(settings)
     return settings
@@ -225,3 +235,16 @@ def _validate(settings: Settings) -> None:
         ]
         if missing:
             raise ConfigError(f"WhatsApp is enabled, but missing: {', '.join(missing)}")
+    if settings.pushover_enabled or settings.alert_provider in {"pushover", "both", "all"}:
+        missing = [
+            name
+            for name, value in {
+                "PUSHOVER_APP_TOKEN": settings.pushover_app_token,
+                "PUSHOVER_USER_KEY": settings.pushover_user_key,
+            }.items()
+            if not value
+        ]
+        if missing:
+            raise ConfigError(f"Pushover is enabled, but missing: {', '.join(missing)}")
+        if settings.pushover_priority < -2 or settings.pushover_priority > 2:
+            raise ConfigError("PUSHOVER_PRIORITY must be between -2 and 2")

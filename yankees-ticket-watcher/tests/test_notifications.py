@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from yankees_ticket_watcher.config import Settings
 from yankees_ticket_watcher.models import AlertType, TicketListing
-from yankees_ticket_watcher.notifier import build_whatsapp_template_payload, format_alert
+from yankees_ticket_watcher.notifier import build_pushover_payload, build_whatsapp_template_payload, format_alert
 from yankees_ticket_watcher.timezone_utils import get_timezone
 
 
@@ -80,3 +80,26 @@ def test_whatsapp_template_payload_uses_configured_template() -> None:
     assert parameters[0] == {"type": "text", "text": "Confirmed Lounge Deal"}
     assert parameters[4]["text"] == "$27.00 all-in"
     assert parameters[7]["text"] == "https://example.com/ticket"
+
+
+def test_pushover_payload_uses_token_user_and_purchase_url() -> None:
+    settings = Settings(
+        pushover_enabled=True,
+        pushover_app_token="app-token",
+        pushover_user_key="user-key",
+        pushover_device="iphone",
+        pushover_priority=1,
+    )
+
+    payload = build_pushover_payload(make_listing(), AlertType.CONFIRMED_LOUNGE_DEAL, settings)
+
+    assert payload["token"] == "app-token"
+    assert payload["user"] == "user-key"
+    assert payload["device"] == "iphone"
+    assert payload["priority"] == "1"
+    assert payload["url"] == "https://example.com/ticket"
+    assert payload["url_title"] == "Buy tickets"
+    assert payload["title"] == "Yankees lounge deal: $27.00 Sec 319"
+    assert "Confirmed Lounge Deal" in payload["message"]
+    assert "Yankees vs Red Sox" in payload["message"]
+    assert len(payload["message"]) <= 1024
