@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61,<69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yankees-ticket-watcher"
+version = "0.1.0"
+description = "Personal Yankees premium ticket resale watcher."
+readme = "README.md"
+requires-python = ">=3.7"
+authors = [{ name = "Yankees Ticket Watcher" }]
+dependencies = [
+  "httpx>=0.24,<0.25",
+  "tenacity>=8.2,<9",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7,<8",
+]
+
+[project.scripts]
+yankees-watch = "yankees_ticket_watcher.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

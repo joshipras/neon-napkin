@@ -1,0 +1,73 @@
+name: Yankees Ticket Watcher
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+      timezone: "America/New_York"
+
+concurrency:
+  group: yankees-ticket-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: yankees-ticket-watcher
+    env:
+      DATABASE_PATH: data/yankees_tickets.db
+      TICKET_PROVIDER: ${{ vars.TICKET_PROVIDER || 'mock' }}
+      MAX_PRICE: ${{ vars.MAX_PRICE || '30' }}
+      TARGET_SECTIONS: ${{ vars.TARGET_SECTIONS || '317,318,319,320,321' }}
+      PREMIUM_SECTIONS: ${{ vars.PREMIUM_SECTIONS || '317=Jim Beam Club area,318=Jim Beam Club area,319=Jim Beam Club area,320=Jim Beam Club area,321=Jim Beam Club area' }}
+      REQUIRE_CONFIRMED_LOUNGE: ${{ vars.REQUIRE_CONFIRMED_LOUNGE || 'false' }}
+      REALERT_PRICE_DROP: ${{ vars.REALERT_PRICE_DROP || '5' }}
+      ALERT_PROVIDER: whatsapp
+      WHATSAPP_ENABLED: "true"
+      WHATSAPP_ACCESS_TOKEN: ${{ secrets.WHATSAPP_ACCESS_TOKEN }}
+      WHATSAPP_PHONE_NUMBER_ID: ${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}
+      WHATSAPP_TO: ${{ secrets.WHATSAPP_TO }}
+      WHATSAPP_TEMPLATE_NAME: ${{ vars.WHATSAPP_TEMPLATE_NAME || 'yankees_ticket_alert' }}
+      WHATSAPP_TEMPLATE_LANGUAGE: ${{ vars.WHATSAPP_TEMPLATE_LANGUAGE || 'en_US' }}
+      WHATSAPP_GRAPH_API_VERSION: ${{ vars.WHATSAPP_GRAPH_API_VERSION || 'v23.0' }}
+      SEATGEEK_CLIENT_ID: ${{ secrets.SEATGEEK_CLIENT_ID }}
+      SEATGEEK_CLIENT_SECRET: ${{ secrets.SEATGEEK_CLIENT_SECRET }}
+      STUBHUB_CLIENT_ID: ${{ secrets.STUBHUB_CLIENT_ID }}
+      STUBHUB_CLIENT_SECRET: ${{ secrets.STUBHUB_CLIENT_SECRET }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Restore ticket database
+        uses: actions/cache/restore@v4
+        with:
+          path: yankees-ticket-watcher/data
+          key: yankees-ticket-db-${{ github.run_id }}
+          restore-keys: |
+            yankees-ticket-db-
+
+      - name: Install app
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run one ticket check
+        run: yankees-watch check --provider "$TICKET_PROVIDER"
+
+      - name: Save ticket database
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: yankees-ticket-watcher/data
+          key: yankees-ticket-db-${{ github.run_id }}
+
