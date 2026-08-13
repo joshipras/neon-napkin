@@ -217,7 +217,7 @@ PUSHOVER_PRIORITY=0
 
 The workflow restores and saves the SQLite `data/` directory with the GitHub Actions cache so duplicate-alert suppression can survive across scheduled runs. GitHub cache persistence is good enough for a personal MVP, but it is not a permanent database.
 
-The workflow defaults to `TICKET_PROVIDER=seatgeek`. SeatGeek's public API currently provides event-level `stats.lowest_price`, so Pushover alerts from this provider mean "this Yankees home game has a lowest listed price below your threshold." They do not confirm section, row, fees, or lounge access.
+The workflow defaults to `TICKET_PROVIDER=seatgeek`. SeatGeek's public API can provide event-level price fields such as `stats.lowest_price`, but some events omit exact price stats while still matching SeatGeek's documented server-side `lowest_price.lte` filter. In that case, Pushover alerts say the event matched `<= $30` but the exact price is unknown. These alerts do not confirm section, row, fees, or lounge access.
 
 ## Scheduler
 

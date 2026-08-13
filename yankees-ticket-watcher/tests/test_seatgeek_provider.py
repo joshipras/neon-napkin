@@ -70,6 +70,41 @@ class SearchStatsOnlyClient:
         raise AssertionError("Detail endpoint should not be called when search stats include a price")
 
 
+class PriceFilterMatchNoStatsClient:
+    def get(self, url, params):
+        if url.endswith("/events"):
+            assert params["lowest_price.lte"] == "30.00"
+            return httpx.Response(
+                200,
+                json={
+                    "events": [
+                        {
+                            "id": 789,
+                            "title": "Tampa Bay Rays at New York Yankees",
+                            "datetime_local": "2026-09-03T19:05:00",
+                            "url": "https://seatgeek.example/events/789",
+                            "venue": {"name": "Yankee Stadium"},
+                            "performers": [
+                                {"slug": "tampa-bay-rays", "short_name": "Rays"},
+                                {"slug": "new-york-yankees", "short_name": "Yankees", "home_team": True},
+                            ],
+                        }
+                    ],
+                    "meta": {"total": 1},
+                },
+            )
+        if url.endswith("/events/789"):
+            return httpx.Response(
+                200,
+                json={
+                    "id": 789,
+                    "url": "https://seatgeek.example/events/789",
+                    "stats": {},
+                },
+            )
+        raise AssertionError("Unexpected URL: {0}".format(url))
+
+
 def test_seatgeek_provider_maps_event_lowest_price_to_event_listing() -> None:
     settings = Settings(seatgeek_client_id="client-id")
     provider = SeatGeekProvider(settings, client=FakeSeatGeekClient())
@@ -109,3 +144,18 @@ def test_seatgeek_provider_uses_search_response_price_stats_first() -> None:
     assert game.opponent == "Toronto Blue Jays"
     assert listing.listed_price == Decimal("26.00")
     assert "stats.lowest_sg_base_price" in (listing.listing_text or "")
+
+
+def test_seatgeek_provider_alerts_when_price_filter_matches_but_exact_price_is_hidden() -> None:
+    settings = Settings(seatgeek_client_id="client-id")
+    provider = SeatGeekProvider(settings, client=PriceFilterMatchNoStatsClient())
+
+    game = provider.get_yankees_home_games()[0]
+    listing = provider.get_listings(game)[0]
+    text = format_alert(listing, AlertType.EVENT_LOW_PRICE)
+
+    assert game.price_filter_matched is True
+    assert listing.listing_id == "789-event-lowest-price-filter-match"
+    assert listing.listed_price == Decimal("30.00")
+    assert "lowest_price.lte=30.00" in (listing.listing_text or "")
+    assert "<= $30.00 SEATGEEK FILTER MATCH - EXACT PRICE UNKNOWN" in text

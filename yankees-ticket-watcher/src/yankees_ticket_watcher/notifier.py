@@ -181,7 +181,7 @@ def format_alert(listing: TicketListing, alert_type: AlertType) -> str:
         if alert_type == AlertType.EVENT_LOW_PRICE
         else "YANKEES PREMIUM SEAT DEAL"
     )
-    price_label = "ALL-IN" if listing.all_in_price is not None else "LISTED PRICE - FEES UNKNOWN"
+    price_label = _format_console_price(listing, alert_type)
     lounge_lines = _lounge_lines(listing, alert_type)
     return "\n".join(
         [
@@ -194,7 +194,7 @@ def format_alert(listing: TicketListing, alert_type: AlertType) -> str:
             f"Section {listing.section or 'Unknown'}",
             f"Row {listing.row or 'Unknown'}",
             "",
-            f"${listing.effective_price} {price_label}",
+            price_label,
             "",
             _location_line(listing, alert_type),
             *lounge_lines,
@@ -232,6 +232,8 @@ def _format_game_time(listing: TicketListing) -> str:
 
 
 def _format_whatsapp_price(listing: TicketListing) -> str:
+    if _is_seatgeek_filter_match(listing):
+        return f"<= ${listing.effective_price} exact price unknown"
     label = "all-in" if listing.all_in_price is not None else "listed, fees unknown"
     return f"${listing.effective_price} {label}"
 
@@ -250,6 +252,8 @@ def _text_param(value: str) -> dict:
 
 def _pushover_title(listing: TicketListing, alert_type: AlertType) -> str:
     if alert_type == AlertType.EVENT_LOW_PRICE:
+        if _is_seatgeek_filter_match(listing):
+            return f"Yankees low price: <= ${listing.effective_price}"
         return f"Yankees low price: ${listing.effective_price}"
     prefix = "Yankees lounge deal" if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL else "Yankees premium deal"
     return f"{prefix}: ${listing.effective_price} Sec {listing.section or 'Unknown'}"
@@ -276,3 +280,14 @@ def _location_line(listing: TicketListing, alert_type: AlertType) -> str:
     if alert_type == AlertType.EVENT_LOW_PRICE:
         return "Event-level SeatGeek price"
     return "Behind home plate target section"
+
+
+def _format_console_price(listing: TicketListing, alert_type: AlertType) -> str:
+    if alert_type == AlertType.EVENT_LOW_PRICE and _is_seatgeek_filter_match(listing):
+        return f"<= ${listing.effective_price} SEATGEEK FILTER MATCH - EXACT PRICE UNKNOWN"
+    label = "ALL-IN" if listing.all_in_price is not None else "LISTED PRICE - FEES UNKNOWN"
+    return f"${listing.effective_price} {label}"
+
+
+def _is_seatgeek_filter_match(listing: TicketListing) -> bool:
+    return bool(listing.listing_text and "lowest_price.lte" in listing.listing_text)

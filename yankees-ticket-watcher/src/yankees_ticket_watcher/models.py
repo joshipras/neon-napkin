@@ -27,6 +27,7 @@ class Game:
     opponent: str
     game_datetime: datetime
     event_url: str | None = None
+    price_filter_matched: bool = False
 
 
 @dataclass(frozen=True)
