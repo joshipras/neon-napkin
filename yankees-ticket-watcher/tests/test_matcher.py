@@ -73,8 +73,18 @@ def test_target_sections(section: str, qualifies: bool) -> None:
 def test_lounge_keyword_confirms_access() -> None:
     result = TicketMatcher(Settings()).evaluate(listing(text="Includes Jim Beam Club access"))
 
+    assert result.listing.lounge_access_detected is True
     assert result.listing.lounge_access_confirmed is True
     assert result.alert_type == AlertType.CONFIRMED_LOUNGE_DEAL
+
+
+def test_jim_beam_club_detected_without_confirmation_language() -> None:
+    result = TicketMatcher(Settings()).evaluate(listing(text="Jim Beam Club"))
+
+    assert result.qualifies is True
+    assert result.listing.lounge_access_detected is True
+    assert result.listing.lounge_access_confirmed is False
+    assert result.alert_type == AlertType.PREMIUM_SECTION_DEAL
 
 
 def test_premium_seating_alone_does_not_confirm_lounge() -> None:
@@ -82,6 +92,7 @@ def test_premium_seating_alone_does_not_confirm_lounge() -> None:
 
     assert result.qualifies is True
     assert result.listing.premium_section is True
+    assert result.listing.lounge_access_detected is False
     assert result.listing.lounge_access_confirmed is False
     assert result.alert_type == AlertType.PREMIUM_SECTION_DEAL
 

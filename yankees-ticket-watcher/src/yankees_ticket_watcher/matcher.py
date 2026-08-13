@@ -42,9 +42,13 @@ class TicketMatcher:
             premium_section = True
             lounge_name = lounge_name or self.settings.premium_sections[section]
 
-        lounge_access_confirmed = listing.lounge_access_confirmed or contains_lounge_keyword(
+        lounge_access_detected = listing.lounge_access_detected or contains_lounge_keyword(
             listing.listing_text,
             self.settings.lounge_keywords,
+        )
+        lounge_access_confirmed = listing.lounge_access_confirmed or contains_lounge_keyword(
+            listing.listing_text,
+            self.settings.confirmed_lounge_keywords,
         )
         if lounge_access_confirmed and not lounge_name:
             lounge_name = _keyword_lounge_name(listing.listing_text) or "Premium lounge or club"
@@ -53,6 +57,7 @@ class TicketMatcher:
             listing,
             section=section,
             premium_section=premium_section,
+            lounge_access_detected=lounge_access_detected,
             lounge_access_confirmed=lounge_access_confirmed,
             lounge_name=lounge_name,
         )
@@ -75,4 +80,3 @@ def _keyword_lounge_name(text: str | None) -> str | None:
     if text and "jim beam" in text.lower():
         return "Jim Beam Club area"
     return None
-

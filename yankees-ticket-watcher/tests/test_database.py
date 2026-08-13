@@ -50,6 +50,7 @@ def test_observations_store_history_fields(tmp_path) -> None:
     assert rows[0]["provider"] == "mock"
     assert rows[0]["effective_price"] == "29.00"
     assert rows[0]["price_source"] == "all_in"
+    assert rows[0]["lounge_access_detected"] == 0
     assert rows[0]["minutes_before_first_pitch"] > 0
 
 

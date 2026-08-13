@@ -153,6 +153,12 @@ class SeatGeekProvider(TicketProvider):
             params["client_secret"] = self.settings.seatgeek_client_secret
         return self._get(f"/events/{game.game_id}", params=params)
 
+    def fetch_event_detail_for_debug(self, game: Game) -> dict:
+        return self._fetch_event_detail(game)
+
+    def raw_event_payload(self, game_id: str) -> dict:
+        return self._event_payload_by_id.get(game_id, {})
+
     @retry(
         retry=retry_if_exception_type((httpx.TimeoutException, httpx.TransportError)),
         stop=stop_after_attempt(3),

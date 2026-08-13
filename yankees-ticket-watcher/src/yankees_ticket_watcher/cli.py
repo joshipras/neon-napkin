@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from yankees_ticket_watcher.config import ConfigError, Settings, load_settings
 from yankees_ticket_watcher.database import TicketDatabase
+from yankees_ticket_watcher.diagnostics import run_seatgeek_debug
 from yankees_ticket_watcher.matcher import TicketMatcher
 from yankees_ticket_watcher.models import AlertType, TicketListing
 from yankees_ticket_watcher.notifier import build_notifier
@@ -30,6 +31,10 @@ def main(argv: list[str] | None = None) -> int:
     db.initialize()
     try:
         if args.command == "check":
+            if args.debug_listings:
+                output_path = settings.database_path.parent / "debug_seatgeek_listings.json"
+                print(run_seatgeek_debug(settings, provider_name, output_path))
+                return 0
             scheduler = _build_scheduler(settings, provider_name, db)
             alerts = scheduler.run_once()
             print(f"Check complete. New alerts: {alerts}")
@@ -76,6 +81,12 @@ def build_parser() -> argparse.ArgumentParser:
     for command in ("check", "run", "games"):
         sub = subparsers.add_parser(command)
         sub.add_argument("--provider", choices=["mock", "seatgeek", "stubhub"], help="Ticket provider to use.")
+        if command == "check":
+            sub.add_argument(
+                "--debug-listings",
+                action="store_true",
+                help="Print and save sanitized raw SeatGeek payload diagnostics without sending alerts.",
+            )
     subparsers.add_parser("deals")
     history = subparsers.add_parser("history")
     history.add_argument("--limit", type=int, default=20)

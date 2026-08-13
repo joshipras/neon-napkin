@@ -48,6 +48,7 @@ class TicketListing:
     listing_text: str | None
     purchase_url: str
     observed_at: datetime
+    lounge_access_detected: bool = False
 
     @property
     def effective_price(self) -> Decimal:

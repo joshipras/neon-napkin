@@ -48,6 +48,7 @@ class TicketDatabase:
                 effective_price TEXT NOT NULL,
                 price_source TEXT NOT NULL,
                 premium_section INTEGER NOT NULL,
+                lounge_access_detected INTEGER NOT NULL DEFAULT 0,
                 lounge_access_confirmed INTEGER NOT NULL,
                 lounge_name TEXT,
                 listing_text TEXT,
@@ -78,6 +79,7 @@ class TicketDatabase:
                 ON alerts(provider, listing_id, last_alerted_at);
             """
         )
+        self._add_column_if_missing("ticket_observations", "lounge_access_detected", "INTEGER NOT NULL DEFAULT 0")
         self.connection.commit()
 
     def upsert_game(self, game: Game) -> None:
@@ -103,10 +105,10 @@ class TicketDatabase:
             INSERT INTO ticket_observations (
                 provider, listing_id, game_id, opponent, game_datetime, section, row, quantity,
                 listed_price, all_in_price, effective_price, price_source, premium_section,
-                lounge_access_confirmed, lounge_name, listing_text, observed_at,
+                lounge_access_detected, lounge_access_confirmed, lounge_name, listing_text, observed_at,
                 minutes_before_first_pitch, purchase_url, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 listing.provider,
@@ -122,6 +124,7 @@ class TicketDatabase:
                 _money(listing.effective_price),
                 listing.price_source,
                 int(listing.premium_section),
+                int(listing.lounge_access_detected),
                 int(listing.lounge_access_confirmed),
                 listing.lounge_name,
                 listing.listing_text,
@@ -133,6 +136,14 @@ class TicketDatabase:
         )
         self.connection.commit()
         return int(cursor.lastrowid)
+
+    def _add_column_if_missing(self, table: str, column: str, definition: str) -> None:
+        columns = {
+            str(row["name"])
+            for row in self.connection.execute(f"PRAGMA table_info({table})").fetchall()
+        }
+        if column not in columns:
+            self.connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
     def should_alert(self, listing: TicketListing, alert_type: AlertType, realert_price_drop: Decimal) -> bool:
         last = self.get_last_alert(listing.provider, listing.listing_id)

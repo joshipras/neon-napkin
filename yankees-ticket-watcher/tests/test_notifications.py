@@ -40,7 +40,7 @@ def test_confirmed_alert_text() -> None:
 
     assert "FIRE YANKEES TICKET DEAL" in text
     assert "$27.00 ALL-IN" in text
-    assert "Lounge access explicitly mentioned" in text
+    assert "CLUB ACCESS CONFIRMED BY LISTING" in text
 
 
 def test_fees_unknown_is_clear() -> None:
@@ -55,8 +55,8 @@ def test_unconfirmed_alert_text() -> None:
     text = format_alert(listing, AlertType.PREMIUM_SECTION_DEAL)
 
     assert "YANKEES PREMIUM SEAT DEAL" in text
-    assert "Lounge access NOT explicitly confirmed" in text
-    assert "Verify the ticket benefits before purchasing." in text
+    assert "CLUB ACCESS NOT CONFIRMED IN SEATGEEK DATA" in text
+    assert "Check benefits before buying." in text
 
 
 def test_whatsapp_template_payload_uses_configured_template() -> None:
@@ -99,7 +99,7 @@ def test_pushover_payload_uses_token_user_and_purchase_url() -> None:
     assert payload["priority"] == "1"
     assert payload["url"] == "https://example.com/ticket"
     assert payload["url_title"] == "Buy tickets"
-    assert payload["title"] == "Yankees lounge deal: $27.00 Sec 319"
+    assert payload["title"] == "Yankees club deal: $27.00 Sec 319"
     assert "Confirmed Lounge Deal" in payload["message"]
     assert "Yankees vs Red Sox" in payload["message"]
     assert len(payload["message"]) <= 1024

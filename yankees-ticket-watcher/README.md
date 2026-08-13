@@ -56,6 +56,14 @@ yankees-watch test-alert
 
 `check` runs one pass. `run` monitors continuously. `deals` and `history` read from SQLite.
 
+For SeatGeek payload diagnostics:
+
+```bash
+SEATGEEK_CLIENT_ID=... yankees-watch check --provider seatgeek --debug-listings
+```
+
+This does not send alerts. It prints a sanitized recursive diagnostic report and writes sanitized raw payloads to `data/debug_seatgeek_listings.json`.
+
 ## Configuration
 
 `.env` values:

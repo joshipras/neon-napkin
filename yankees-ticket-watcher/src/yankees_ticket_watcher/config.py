@@ -25,6 +25,25 @@ DEFAULT_LOUNGE_KEYWORDS = [
     "premium club",
     "club included",
 ]
+DEFAULT_CONFIRMED_LOUNGE_KEYWORDS = [
+    "jim beam club access",
+    "jim beam suite access",
+    "includes jim beam club",
+    "includes club access",
+    "club access included",
+    "access to club",
+    "access to the club",
+    "includes club",
+    "lounge access",
+    "access to lounge",
+    "access to the lounge",
+    "premium club access",
+    "audi yankees club",
+    "pepsi lounge",
+    "delta sky360",
+    "delta sky360 suite",
+    "legends suite",
+]
 
 
 class ConfigError(ValueError):
@@ -38,6 +57,7 @@ class Settings:
     target_sections: set[str] = field(default_factory=lambda: set(DEFAULT_TARGET_SECTIONS))
     premium_sections: dict[str, str] = field(default_factory=lambda: dict(DEFAULT_PREMIUM_SECTIONS))
     lounge_keywords: list[str] = field(default_factory=lambda: list(DEFAULT_LOUNGE_KEYWORDS))
+    confirmed_lounge_keywords: list[str] = field(default_factory=lambda: list(DEFAULT_CONFIRMED_LOUNGE_KEYWORDS))
     require_confirmed_lounge: bool = False
     realert_price_drop: Decimal = Decimal("5.00")
     database_path: Path = Path("data/yankees_tickets.db")
@@ -82,6 +102,10 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         target_sections=_csv_set(values.get("TARGET_SECTIONS"), DEFAULT_TARGET_SECTIONS),
         premium_sections=_section_map(values.get("PREMIUM_SECTIONS"), DEFAULT_PREMIUM_SECTIONS),
         lounge_keywords=_csv_list(values.get("LOUNGE_KEYWORDS"), DEFAULT_LOUNGE_KEYWORDS),
+        confirmed_lounge_keywords=_csv_list(
+            values.get("CONFIRMED_LOUNGE_KEYWORDS"),
+            DEFAULT_CONFIRMED_LOUNGE_KEYWORDS,
+        ),
         require_confirmed_lounge=_bool(values, "REQUIRE_CONFIRMED_LOUNGE", False),
         realert_price_drop=_decimal(values, "REALERT_PRICE_DROP", Decimal("5.00")),
         database_path=Path(values.get("DATABASE_PATH", "data/yankees_tickets.db")),

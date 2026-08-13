@@ -1,0 +1,2762 @@
+[
+  {
+    "detail_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-21T19:05:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-21T23:05:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-22T00:05:00",
+      "event_group_ids": [],
+      "event_promotion": {
+        "additional_info": "First 18,000 fans",
+        "headline": "Cody Bellinger Bobblehead",
+        "images": {
+          "icon": "https://seatgeek.com/images/event_promotion/99aec159-1222-43a4-81a7-30db4729d3a8/icon.svg",
+          "png@2x": "https://seatgeek.com/images/event_promotion/6c8d7f3e-e50e-4ea6-9105-a6d0594c9d56/png_2x.png",
+          "png@3x": "https://seatgeek.com/images/event_promotion/6c8d7f3e-e50e-4ea6-9105-a6d0594c9d56/png_3x.png"
+        },
+        "promotion_image_url": "https://seatgeekimages.com/image_uploads/event_promotions/belli.png",
+        "promotion_type": "Bobblehead"
+      },
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691580,
+      "integrated": {
+        "provider_id": "1D006323F58D4357",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516065",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F58D4357",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": null,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 17,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#101211",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#1D2D5C",
+              "#134A8E",
+              "#134A8E"
+            ],
+            "iconic": "#134A8E",
+            "primary": [
+              "#1D2D5C",
+              "#134A8E"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 17,
+          "id": 17,
+          "image": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg",
+          "image_attribution": "Thomas Skrlj/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025 for SG Testing",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Toronto Blue Jays",
+          "num_upcoming_events": 216,
+          "popularity": 1548480.0,
+          "relative_url": "/toronto-blue-jays-tickets",
+          "score": 0.69,
+          "short_name": "Blue Jays",
+          "slug": "toronto-blue-jays",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/toronto-blue-jays-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8648196517,
+      "relative_url": "/new-york-yankees-tickets/8-21-2026-bronx-new-york-yankee-stadium/mlb/17691580",
+      "sales_end_datetime_utc": null,
+      "score": 0.8058125173,
+      "season_stage": null,
+      "short_title": "Blue Jays at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F58D4357",
+      "time_tbd": false,
+      "title": "Toronto Blue Jays at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-21-2026-bronx-new-york-yankee-stadium/mlb/17691580",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-22T00:05:00"
+    },
+    "game": {
+      "event_url": "https://seatgeek.com/new-york-yankees-tickets/8-21-2026-bronx-new-york-yankee-stadium/mlb/17691580",
+      "game_datetime": "2026-08-21 19:05:00-04:00",
+      "game_id": "17691580",
+      "opponent": "Blue Jays",
+      "price_filter_matched": true,
+      "provider": "seatgeek"
+    },
+    "search_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-21T19:05:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-21T23:05:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-22T00:05:00",
+      "event_group_ids": [],
+      "event_promotion": {
+        "additional_info": "First 18,000 fans",
+        "headline": "Cody Bellinger Bobblehead",
+        "images": {
+          "icon": "https://seatgeek.com/images/event_promotion/99aec159-1222-43a4-81a7-30db4729d3a8/icon.svg",
+          "png@2x": "https://seatgeek.com/images/event_promotion/6c8d7f3e-e50e-4ea6-9105-a6d0594c9d56/png_2x.png",
+          "png@3x": "https://seatgeek.com/images/event_promotion/6c8d7f3e-e50e-4ea6-9105-a6d0594c9d56/png_3x.png"
+        },
+        "promotion_image_url": "https://seatgeekimages.com/image_uploads/event_promotions/belli.png",
+        "promotion_type": "Bobblehead"
+      },
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691580,
+      "integrated": {
+        "provider_id": "1D006323F58D4357",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516065",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F58D4357",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": null,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 17,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#101211",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#1D2D5C",
+              "#134A8E",
+              "#134A8E"
+            ],
+            "iconic": "#134A8E",
+            "primary": [
+              "#1D2D5C",
+              "#134A8E"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 17,
+          "id": 17,
+          "image": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg",
+          "image_attribution": "Thomas Skrlj/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025 for SG Testing",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Toronto Blue Jays",
+          "num_upcoming_events": 216,
+          "popularity": 1548480.0,
+          "relative_url": "/toronto-blue-jays-tickets",
+          "score": 0.69,
+          "short_name": "Blue Jays",
+          "slug": "toronto-blue-jays",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/toronto-blue-jays-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8648196517,
+      "relative_url": "/new-york-yankees-tickets/8-21-2026-bronx-new-york-yankee-stadium/mlb/17691580",
+      "sales_end_datetime_utc": null,
+      "score": 0.8058125173,
+      "season_stage": null,
+      "short_title": "Blue Jays at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F58D4357",
+      "time_tbd": false,
+      "title": "Toronto Blue Jays at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-21-2026-bronx-new-york-yankee-stadium/mlb/17691580",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-22T00:05:00"
+    }
+  },
+  {
+    "detail_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-23T13:35:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-23T17:35:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-23T18:35:00",
+      "event_group_ids": [],
+      "event_promotion": null,
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691582,
+      "integrated": {
+        "provider_id": "1D006323F58F435D",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516086",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F58F435D",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": 17691582,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 17,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#101211",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#1D2D5C",
+              "#134A8E",
+              "#134A8E"
+            ],
+            "iconic": "#134A8E",
+            "primary": [
+              "#1D2D5C",
+              "#134A8E"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 17,
+          "id": 17,
+          "image": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg",
+          "image_attribution": "Thomas Skrlj/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025 for SG Testing",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Toronto Blue Jays",
+          "num_upcoming_events": 216,
+          "popularity": 1548480.0,
+          "relative_url": "/toronto-blue-jays-tickets",
+          "score": 0.69,
+          "short_name": "Blue Jays",
+          "slug": "toronto-blue-jays",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/toronto-blue-jays-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8434464872,
+      "relative_url": "/new-york-yankees-tickets/8-23-2026-bronx-new-york-yankee-stadium/mlb/17691582",
+      "sales_end_datetime_utc": null,
+      "score": 0.7510506108,
+      "season_stage": null,
+      "short_title": "Blue Jays at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F58F435D",
+      "time_tbd": false,
+      "title": "Toronto Blue Jays at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-23-2026-bronx-new-york-yankee-stadium/mlb/17691582",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-23T18:35:00"
+    },
+    "game": {
+      "event_url": "https://seatgeek.com/new-york-yankees-tickets/8-23-2026-bronx-new-york-yankee-stadium/mlb/17691582",
+      "game_datetime": "2026-08-23 13:35:00-04:00",
+      "game_id": "17691582",
+      "opponent": "Blue Jays",
+      "price_filter_matched": true,
+      "provider": "seatgeek"
+    },
+    "search_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-23T13:35:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-23T17:35:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-23T18:35:00",
+      "event_group_ids": [],
+      "event_promotion": null,
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691582,
+      "integrated": {
+        "provider_id": "1D006323F58F435D",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516086",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F58F435D",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": 17691582,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 17,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_f3032be2/8/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#101211",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#1D2D5C",
+              "#134A8E",
+              "#134A8E"
+            ],
+            "iconic": "#134A8E",
+            "primary": [
+              "#1D2D5C",
+              "#134A8E"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 17,
+          "id": 17,
+          "image": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg",
+          "image_attribution": "Thomas Skrlj/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025 for SG Testing",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/toronto-blue-jays-7641f5/17/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Toronto Blue Jays",
+          "num_upcoming_events": 216,
+          "popularity": 1548480.0,
+          "relative_url": "/toronto-blue-jays-tickets",
+          "score": 0.69,
+          "short_name": "Blue Jays",
+          "slug": "toronto-blue-jays",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/toronto-blue-jays-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8434464872,
+      "relative_url": "/new-york-yankees-tickets/8-23-2026-bronx-new-york-yankee-stadium/mlb/17691582",
+      "sales_end_datetime_utc": null,
+      "score": 0.7510506108,
+      "season_stage": null,
+      "short_title": "Blue Jays at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F58F435D",
+      "time_tbd": false,
+      "title": "Toronto Blue Jays at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-23-2026-bronx-new-york-yankee-stadium/mlb/17691582",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-23T18:35:00"
+    }
+  },
+  {
+    "detail_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-25T19:05:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-25T23:05:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-26T00:05:00",
+      "event_group_ids": [],
+      "event_promotion": {
+        "additional_info": "First 18,000 fans",
+        "headline": "Yankees Rugby Shirt",
+        "images": {
+          "icon": "https://seatgeek.com/images/event_promotion/262c3ee1-d53c-4b35-8772-962666249141/icon.svg",
+          "png@2x": "https://seatgeek.com/images/event_promotion/58bf92d2-df16-481e-89ee-99461de88d1f/png_2x.png",
+          "png@3x": "https://seatgeek.com/images/event_promotion/58bf92d2-df16-481e-89ee-99461de88d1f/png_3x.png"
+        },
+        "promotion_image_url": "https://seatgeekimages.com/image_uploads/event_promotions/rugby.png",
+        "promotion_type": "T-shirt"
+      },
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691583,
+      "integrated": {
+        "provider_id": "1D006323F58F4361",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516096",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "5965643",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "vividseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F58F4361",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": null,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 20,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#363828",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#002D62",
+              "#EB6E1F",
+              "#002D62"
+            ],
+            "iconic": "#002D62",
+            "primary": [
+              "#002D62",
+              "#EB6E1F"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League West",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 20,
+          "id": 20,
+          "image": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg",
+          "image_attribution": "Kevin M. Cox/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Houston Astros",
+          "num_upcoming_events": 216,
+          "popularity": 874624.0,
+          "relative_url": "/houston-astros-tickets",
+          "score": 0.66,
+          "short_name": "Astros",
+          "slug": "houston-astros",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/houston-astros-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8251730629,
+      "relative_url": "/new-york-yankees-tickets/8-25-2026-bronx-new-york-yankee-stadium/mlb/17691583",
+      "sales_end_datetime_utc": null,
+      "score": 0.7016447289,
+      "season_stage": null,
+      "short_title": "Astros at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F58F4361",
+      "time_tbd": false,
+      "title": "Houston Astros at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-25-2026-bronx-new-york-yankee-stadium/mlb/17691583",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-26T00:05:00"
+    },
+    "game": {
+      "event_url": "https://seatgeek.com/new-york-yankees-tickets/8-25-2026-bronx-new-york-yankee-stadium/mlb/17691583",
+      "game_datetime": "2026-08-25 19:05:00-04:00",
+      "game_id": "17691583",
+      "opponent": "Astros",
+      "price_filter_matched": true,
+      "provider": "seatgeek"
+    },
+    "search_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-25T19:05:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-25T23:05:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-26T00:05:00",
+      "event_group_ids": [],
+      "event_promotion": {
+        "additional_info": "First 18,000 fans",
+        "headline": "Yankees Rugby Shirt",
+        "images": {
+          "icon": "https://seatgeek.com/images/event_promotion/262c3ee1-d53c-4b35-8772-962666249141/icon.svg",
+          "png@2x": "https://seatgeek.com/images/event_promotion/58bf92d2-df16-481e-89ee-99461de88d1f/png_2x.png",
+          "png@3x": "https://seatgeek.com/images/event_promotion/58bf92d2-df16-481e-89ee-99461de88d1f/png_3x.png"
+        },
+        "promotion_image_url": "https://seatgeekimages.com/image_uploads/event_promotions/rugby.png",
+        "promotion_type": "T-shirt"
+      },
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691583,
+      "integrated": {
+        "provider_id": "1D006323F58F4361",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516096",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "5965643",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "vividseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F58F4361",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": null,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 20,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#363828",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#002D62",
+              "#EB6E1F",
+              "#002D62"
+            ],
+            "iconic": "#002D62",
+            "primary": [
+              "#002D62",
+              "#EB6E1F"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League West",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 20,
+          "id": 20,
+          "image": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg",
+          "image_attribution": "Kevin M. Cox/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Houston Astros",
+          "num_upcoming_events": 216,
+          "popularity": 874624.0,
+          "relative_url": "/houston-astros-tickets",
+          "score": 0.66,
+          "short_name": "Astros",
+          "slug": "houston-astros",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/houston-astros-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8251730629,
+      "relative_url": "/new-york-yankees-tickets/8-25-2026-bronx-new-york-yankee-stadium/mlb/17691583",
+      "sales_end_datetime_utc": null,
+      "score": 0.7016447289,
+      "season_stage": null,
+      "short_title": "Astros at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F58F4361",
+      "time_tbd": false,
+      "title": "Houston Astros at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-25-2026-bronx-new-york-yankee-stadium/mlb/17691583",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-26T00:05:00"
+    }
+  },
+  {
+    "detail_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-26T19:05:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-26T23:05:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-27T00:05:00",
+      "event_group_ids": [],
+      "event_promotion": null,
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691584,
+      "integrated": {
+        "provider_id": "1D006323F5904363",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516105",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "5965652",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "vividseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F5904363",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": null,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 20,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#363828",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#002D62",
+              "#EB6E1F",
+              "#002D62"
+            ],
+            "iconic": "#002D62",
+            "primary": [
+              "#002D62",
+              "#EB6E1F"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League West",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 20,
+          "id": 20,
+          "image": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg",
+          "image_attribution": "Kevin M. Cox/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Houston Astros",
+          "num_upcoming_events": 216,
+          "popularity": 874624.0,
+          "relative_url": "/houston-astros-tickets",
+          "score": 0.66,
+          "short_name": "Astros",
+          "slug": "houston-astros",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/houston-astros-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8115345202,
+      "relative_url": "/new-york-yankees-tickets/8-26-2026-bronx-new-york-yankee-stadium/mlb/17691584",
+      "sales_end_datetime_utc": null,
+      "score": 0.6838968236,
+      "season_stage": null,
+      "short_title": "Astros at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F5904363",
+      "time_tbd": false,
+      "title": "Houston Astros at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-26-2026-bronx-new-york-yankee-stadium/mlb/17691584",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-27T00:05:00"
+    },
+    "game": {
+      "event_url": "https://seatgeek.com/new-york-yankees-tickets/8-26-2026-bronx-new-york-yankee-stadium/mlb/17691584",
+      "game_datetime": "2026-08-26 19:05:00-04:00",
+      "game_id": "17691584",
+      "opponent": "Astros",
+      "price_filter_matched": true,
+      "provider": "seatgeek"
+    },
+    "search_event_payload": {
+      "access_method": null,
+      "announce_date": "2025-08-26T00:00:00",
+      "announcements": {},
+      "conditional": false,
+      "contingent": false,
+      "created_at": "2025-08-26T20:48:35",
+      "date_tbd": false,
+      "datetime_local": "2026-08-26T19:05:00",
+      "datetime_tbd": false,
+      "datetime_utc": "2026-08-26T23:05:00",
+      "description": "",
+      "domain_information": [],
+      "enddatetime_utc": "2026-08-27T00:05:00",
+      "event_group_ids": [],
+      "event_promotion": null,
+      "expected_experience_end": null,
+      "game_number": 0,
+      "home_game_number": 0,
+      "id": 17691584,
+      "integrated": {
+        "provider_id": "1D006323F5904363",
+        "provider_name": "TICKETMASTER"
+      },
+      "is_open": false,
+      "is_visible": true,
+      "is_visible_override": "VISIBLE",
+      "links": [
+        {
+          "display_name": "",
+          "id": "3516105",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "rapidseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "5965652",
+          "link_type": "ID",
+          "logos": {},
+          "primary": false,
+          "provider": "vividseats",
+          "sales": [],
+          "url": ""
+        },
+        {
+          "display_name": "",
+          "id": "1D006323F5904363",
+          "link_type": "ID",
+          "logos": {},
+          "primary": true,
+          "provider": "ticketmaster",
+          "sales": [],
+          "url": ""
+        }
+      ],
+      "main_event_id": null,
+      "onsale": null,
+      "open_domain_id": "",
+      "open_id": "",
+      "performer_order": [
+        {
+          "id": 8,
+          "ordinal": 0
+        },
+        {
+          "id": 20,
+          "ordinal": 1
+        }
+      ],
+      "performers": [
+        {
+          "ada_dominant_image_color": "#2e3533",
+          "colors": {
+            "all": [
+              "#132448",
+              "#C4CED4",
+              "#132448"
+            ],
+            "iconic": "#132448",
+            "primary": [
+              "#132448",
+              "#C4CED4"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League East",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL East",
+              "slug": "american-league-east",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_team": true,
+          "home_venue_id": 8,
+          "id": 8,
+          "image": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg",
+          "image_attribution": null,
+          "image_license": null,
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/matchup/v3_5fadd53e/8/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "New York Yankees",
+          "num_upcoming_events": 217,
+          "popularity": 2771338.0,
+          "primary": true,
+          "relative_url": "/new-york-yankees-tickets",
+          "score": 0.71,
+          "short_name": "Yankees",
+          "slug": "new-york-yankees",
+          "stats": {
+            "event_count": 217
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/new-york-yankees-tickets"
+        },
+        {
+          "ada_dominant_image_color": "#363828",
+          "away_team": true,
+          "colors": {
+            "all": [
+              "#002D62",
+              "#EB6E1F",
+              "#002D62"
+            ],
+            "iconic": "#002D62",
+            "primary": [
+              "#002D62",
+              "#EB6E1F"
+            ]
+          },
+          "divisions": [
+            {
+              "display_name": "American League",
+              "display_type": "League",
+              "division_level": 1,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            },
+            {
+              "display_name": "American League West",
+              "display_type": "Division",
+              "division_level": 2,
+              "short_name": "AL West",
+              "slug": "american-league-west",
+              "taxonomy_id": 1010100
+            }
+          ],
+          "has_upcoming_events": true,
+          "hidden": false,
+          "home_venue_id": 20,
+          "id": 20,
+          "image": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg",
+          "image_attribution": "Kevin M. Cox/MLB Photos via Getty Images",
+          "image_license": "Client Provided - 2025",
+          "image_rights_message": "",
+          "images": {
+            "huge": "https://seatgeekimages.com/performers-landscape/houston-astros-77d515/20/huge.jpg"
+          },
+          "is_event": false,
+          "links": [],
+          "location": null,
+          "name": "Houston Astros",
+          "num_upcoming_events": 216,
+          "popularity": 874624.0,
+          "relative_url": "/houston-astros-tickets",
+          "score": 0.66,
+          "short_name": "Astros",
+          "slug": "houston-astros",
+          "stats": {
+            "event_count": 216
+          },
+          "taxonomies": [
+            {
+              "id": 1000000,
+              "name": "sports",
+              "parent_id": null,
+              "rank": 0,
+              "seo_event_type": "sports"
+            },
+            {
+              "id": 1010000,
+              "name": "baseball",
+              "parent_id": 1000000,
+              "rank": 0,
+              "seo_event_type": "baseball"
+            },
+            {
+              "id": 1010100,
+              "name": "mlb",
+              "parent_id": 1010000,
+              "rank": 0,
+              "seo_event_type": "mlb"
+            }
+          ],
+          "type": "mlb",
+          "url": "https://seatgeek.com/houston-astros-tickets"
+        }
+      ],
+      "playoffs": null,
+      "popularity": 0.8115345202,
+      "relative_url": "/new-york-yankees-tickets/8-26-2026-bronx-new-york-yankee-stadium/mlb/17691584",
+      "sales_end_datetime_utc": null,
+      "score": 0.6838968236,
+      "season_stage": null,
+      "short_title": "Astros at Yankees",
+      "stats": {},
+      "status": "normal",
+      "taxonomies": [
+        {
+          "id": 1000000,
+          "name": "sports",
+          "parent_id": null,
+          "rank": 0,
+          "seo_event_type": "sports"
+        },
+        {
+          "id": 1010000,
+          "name": "baseball",
+          "parent_id": 1000000,
+          "rank": 0,
+          "seo_event_type": "baseball"
+        },
+        {
+          "id": 1010100,
+          "name": "mlb",
+          "parent_id": 1010000,
+          "rank": 0,
+          "seo_event_type": "mlb"
+        }
+      ],
+      "tbd_datetime_range_end_utc": null,
+      "tbd_datetime_range_start_utc": null,
+      "tdc_pv_id": 0,
+      "tdc_pvo_id": 0,
+      "themes": [],
+      "ticketmaster": "1D006323F5904363",
+      "time_tbd": false,
+      "title": "Houston Astros at New York Yankees",
+      "type": "mlb",
+      "url": "https://seatgeek.com/new-york-yankees-tickets/8-26-2026-bronx-new-york-yankee-stadium/mlb/17691584",
+      "venue": {
+        "access_method": null,
+        "address": "1 East 161st Street",
+        "capacity": 52325,
+        "city": "Bronx",
+        "country": "US",
+        "display_location": "Bronx, NY",
+        "extended_address": "Bronx, NY 10451",
+        "has_upcoming_events": true,
+        "hidden": false,
+        "id": 8,
+        "links": [],
+        "location": {
+          "lat": 40.8296,
+          "lon": -73.9262
+        },
+        "marquee_city": "New York City",
+        "metro_code": 501,
+        "name": "Yankee Stadium",
+        "name_v2": "Yankee Stadium",
+        "num_upcoming_events": 165,
+        "passes": [
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Parking",
+            "pass_type": "PARKING",
+            "relative_url": "/venues/yankee-stadium/parking",
+            "stats": {
+              "event_count": 46
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/parking"
+          },
+          {
+            "image_rights_message": "",
+            "name": "Yankee Stadium Club Passes",
+            "pass_type": "CLUB_PASSES",
+            "relative_url": "/venues/yankee-stadium/club-passes",
+            "stats": {
+              "event_count": 24
+            },
+            "url": "https://seatgeek.com/venues/yankee-stadium/club-passes"
+          }
+        ],
+        "popularity": 1117089,
+        "postal_code": "10451",
+        "relative_url": "/venues/yankee-stadium/tickets",
+        "score": 0.92,
+        "sg_market_area": 2,
+        "slug": "yankee-stadium",
+        "state": "NY",
+        "timezone": "America/New_York",
+        "url": "https://seatgeek.com/venues/yankee-stadium/tickets"
+      },
+      "visible_at": "2026-08-01T06:58:53Z",
+      "visible_until_utc": "2026-08-27T00:05:00"
+    }
+  }
+]

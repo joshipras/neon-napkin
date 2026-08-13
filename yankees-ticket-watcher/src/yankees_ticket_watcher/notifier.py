@@ -92,6 +92,17 @@ class PushoverNotificationProvider(NotificationProvider):
         response = self.client.post(self.messages_url, data=payload)
         if response.status_code >= 400:
             raise NotificationError(f"Pushover API error {response.status_code}: {response.text[:300]}")
+        try:
+            body = response.json()
+        except ValueError:
+            LOGGER.info("Pushover accepted alert for %s, but returned non-JSON body", listing.listing_id)
+            return
+        LOGGER.info(
+            "Pushover accepted alert for %s: status=%s request=%s",
+            listing.listing_id,
+            body.get("status"),
+            body.get("request"),
+        )
 
 
 class NotificationManager:
@@ -218,12 +229,13 @@ def _lounge_lines(listing: TicketListing, alert_type: AlertType) -> list[str]:
     if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL:
         return [
             listing.lounge_name or "Premium lounge or club",
-            "Lounge access explicitly mentioned",
+            "CLUB ACCESS CONFIRMED BY LISTING",
         ]
     return [
         listing.lounge_name or "Premium section",
-        "Lounge access NOT explicitly confirmed",
-        "Verify the ticket benefits before purchasing.",
+        "CLUB ACCESS NOT CONFIRMED IN SEATGEEK DATA",
+        "Known premium section" if listing.premium_section else "Premium section not verified",
+        "Check benefits before buying.",
     ]
 
 
@@ -242,7 +254,11 @@ def _format_whatsapp_lounge_status(listing: TicketListing, alert_type: AlertType
     if alert_type == AlertType.EVENT_LOW_PRICE:
         return "SeatGeek event-level price; section/lounge unknown"
     if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL:
-        return f"{listing.lounge_name or 'Premium lounge or club'} explicitly mentioned"
+        return f"{listing.lounge_name or 'Premium lounge or club'} access confirmed by listing"
+    if listing.premium_section:
+        return f"{listing.lounge_name or 'Known premium section'}; lounge entitlement not verified by SeatGeek data"
+    if listing.lounge_access_detected:
+        return "Club/lounge language detected, but access is not explicitly confirmed"
     return "Premium section; lounge access not explicitly confirmed"
 
 
@@ -255,7 +271,7 @@ def _pushover_title(listing: TicketListing, alert_type: AlertType) -> str:
         if _is_seatgeek_filter_match(listing):
             return f"Yankees low price: <= ${listing.effective_price}"
         return f"Yankees low price: ${listing.effective_price}"
-    prefix = "Yankees lounge deal" if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL else "Yankees premium deal"
+    prefix = "Yankees club deal" if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL else "Yankees premium deal"
     return f"{prefix}: ${listing.effective_price} Sec {listing.section or 'Unknown'}"
 
 
@@ -269,6 +285,7 @@ def _pushover_message(listing: TicketListing, alert_type: AlertType) -> str:
             _format_game_time(listing),
             f"Section {listing.section or 'Unknown'}, Row {listing.row or 'Unknown'}",
             price,
+            "Behind home plate" if listing.section != "EVENT" else "Event-level SeatGeek price",
             lounge,
             f"Marketplace: {listing.provider}",
             "Verify ticket benefits before purchasing.",
