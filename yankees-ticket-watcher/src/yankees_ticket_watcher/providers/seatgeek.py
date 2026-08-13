@@ -29,6 +29,7 @@ class SeatGeekProvider(TicketProvider):
     def __init__(self, settings: Settings, client: httpx.Client | None = None) -> None:
         self.settings = settings
         self.client = client or httpx.Client(timeout=15)
+        self._event_payload_by_id: dict[str, dict] = {}
         if not settings.seatgeek_client_id:
             raise MissingCredentialsError("SEATGEEK_CLIENT_ID is required for SeatGeek API access")
 
@@ -51,6 +52,8 @@ class SeatGeekProvider(TicketProvider):
         games: list[Game] = []
         for event in payload.get("events", []):
             try:
+                event_id = str(event["id"])
+                self._event_payload_by_id[event_id] = event
                 venue = event.get("venue") or {}
                 if venue.get("name") != "Yankee Stadium":
                     continue
@@ -61,7 +64,7 @@ class SeatGeekProvider(TicketProvider):
                 games.append(
                     Game(
                         provider=self.name,
-                        game_id=str(event["id"]),
+                        game_id=event_id,
                         opponent=opponent,
                         game_datetime=game_dt,
                         event_url=event.get("url"),
@@ -72,14 +75,23 @@ class SeatGeekProvider(TicketProvider):
         return games
 
     def get_listings(self, game: Game) -> list[TicketListing]:
-        params = {"client_id": self.settings.seatgeek_client_id}
-        if self.settings.seatgeek_client_secret:
-            params["client_secret"] = self.settings.seatgeek_client_secret
-        payload = self._get(f"/events/{game.game_id}", params=params)
-        stats = payload.get("stats") or {}
-        lowest_price = _money(stats.get("lowest_price"))
+        payload = self._event_payload_by_id.get(game.game_id, {})
+        lowest_price, price_field = _lowest_price(payload)
         if lowest_price is None:
-            LOGGER.info("SeatGeek event %s has no stats.lowest_price", game.game_id)
+            payload = self._fetch_event_detail(game)
+            lowest_price, price_field = _lowest_price(payload)
+
+        purchase_url = payload.get("url") or game.event_url or ""
+        stats = payload.get("stats") or {}
+        listing_count = stats.get("listing_count")
+        listing_count_text = f" listing_count={listing_count}." if listing_count is not None else ""
+        if lowest_price is None:
+            LOGGER.info(
+                "SeatGeek event %s has no usable lowest price. stats keys=%s.%s",
+                game.game_id,
+                sorted(stats.keys()),
+                listing_count_text,
+            )
             return []
         observed_at = datetime.now(self.settings.timezone)
         return [
@@ -98,13 +110,19 @@ class SeatGeekProvider(TicketProvider):
                 lounge_access_confirmed=False,
                 lounge_name=None,
                 listing_text=(
-                    "SeatGeek event-level lowest_price. Public API does not provide "
+                    f"SeatGeek event-level {price_field}. Public API does not provide "
                     "section, row, fees, or lounge access details for this observation."
                 ),
-                purchase_url=payload.get("url") or game.event_url or "",
+                purchase_url=purchase_url,
                 observed_at=observed_at,
             )
         ]
+
+    def _fetch_event_detail(self, game: Game) -> dict:
+        params = {"client_id": self.settings.seatgeek_client_id}
+        if self.settings.seatgeek_client_secret:
+            params["client_secret"] = self.settings.seatgeek_client_secret
+        return self._get(f"/events/{game.game_id}", params=params)
 
     @retry(
         retry=retry_if_exception_type((httpx.TimeoutException, httpx.TransportError)),
@@ -138,3 +156,17 @@ def _money(value: object) -> Decimal | None:
         return Decimal(str(value)).quantize(Decimal("0.01"))
     except (InvalidOperation, TypeError, ValueError):
         return None
+
+
+def _lowest_price(event: dict) -> tuple[Decimal | None, str | None]:
+    stats = event.get("stats") or {}
+    for field_name in (
+        "lowest_price",
+        "lowest_sg_base_price",
+        "lowest_sg_base_price_good_deals",
+        "lowest_price_good_deals",
+    ):
+        value = _money(stats.get(field_name))
+        if value is not None:
+            return value, f"stats.{field_name}"
+    return None, None
