@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta
+from decimal import Decimal, InvalidOperation
 
 import httpx
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
@@ -16,10 +17,10 @@ LOGGER = logging.getLogger(__name__)
 class SeatGeekProvider(TicketProvider):
     """SeatGeek event adapter.
 
-    SeatGeek's public Platform API documents events and aggregate ticket stats, but
-    not buyer-facing section-level resale inventory. This provider can discover
-    Yankees home games and returns no listings until a legitimate listing-level
-    API is configured.
+    SeatGeek's public Platform API documents events and aggregate ticket stats,
+    including stats.lowest_price. It does not expose buyer-facing section-level
+    resale inventory in the public docs, so listings returned here are event-level
+    lowest-price observations with unknown section and lounge details.
     """
 
     name = "seatgeek"
@@ -40,6 +41,7 @@ class SeatGeekProvider(TicketProvider):
             "venue.name": "Yankee Stadium",
             "datetime_local.gte": now.strftime("%Y-%m-%dT%H:%M:%S"),
             "datetime_local.lte": until.strftime("%Y-%m-%dT%H:%M:%S"),
+            "listing_count.gt": "0",
             "sort": "datetime_local.asc",
             "per_page": "50",
         }
@@ -70,11 +72,39 @@ class SeatGeekProvider(TicketProvider):
         return games
 
     def get_listings(self, game: Game) -> list[TicketListing]:
-        LOGGER.info(
-            "SeatGeek public Platform API does not expose section-level buyer listings for event %s; no listings returned",
-            game.game_id,
-        )
-        return []
+        params = {"client_id": self.settings.seatgeek_client_id}
+        if self.settings.seatgeek_client_secret:
+            params["client_secret"] = self.settings.seatgeek_client_secret
+        payload = self._get(f"/events/{game.game_id}", params=params)
+        stats = payload.get("stats") or {}
+        lowest_price = _money(stats.get("lowest_price"))
+        if lowest_price is None:
+            LOGGER.info("SeatGeek event %s has no stats.lowest_price", game.game_id)
+            return []
+        observed_at = datetime.now(self.settings.timezone)
+        return [
+            TicketListing(
+                provider=self.name,
+                listing_id=f"{game.game_id}-event-lowest-price",
+                game_id=game.game_id,
+                opponent=game.opponent,
+                game_datetime=game.game_datetime,
+                section="EVENT",
+                row=None,
+                quantity=None,
+                listed_price=lowest_price,
+                all_in_price=None,
+                premium_section=False,
+                lounge_access_confirmed=False,
+                lounge_name=None,
+                listing_text=(
+                    "SeatGeek event-level lowest_price. Public API does not provide "
+                    "section, row, fees, or lounge access details for this observation."
+                ),
+                purchase_url=payload.get("url") or game.event_url or "",
+                observed_at=observed_at,
+            )
+        ]
 
     @retry(
         retry=retry_if_exception_type((httpx.TimeoutException, httpx.TransportError)),
@@ -99,3 +129,12 @@ def _opponent_from_event(event: dict) -> str:
             return performer.get("short_name") or performer.get("name") or "Opponent TBD"
     title = event.get("short_title") or event.get("title") or "Yankees game"
     return title.replace("New York Yankees", "").replace("Yankees", "").replace(" at ", "").strip(" -") or "Opponent TBD"
+
+
+def _money(value: object) -> Decimal | None:
+    if value is None:
+        return None
+    try:
+        return Decimal(str(value)).quantize(Decimal("0.01"))
+    except (InvalidOperation, TypeError, ValueError):
+        return None

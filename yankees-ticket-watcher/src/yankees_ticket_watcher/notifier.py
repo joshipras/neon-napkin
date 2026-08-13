@@ -177,6 +177,8 @@ def format_alert(listing: TicketListing, alert_type: AlertType) -> str:
     heading = (
         "FIRE YANKEES TICKET DEAL"
         if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL
+        else "YANKEES EVENT LOW PRICE"
+        if alert_type == AlertType.EVENT_LOW_PRICE
         else "YANKEES PREMIUM SEAT DEAL"
     )
     price_label = "ALL-IN" if listing.all_in_price is not None else "LISTED PRICE - FEES UNKNOWN"
@@ -194,7 +196,7 @@ def format_alert(listing: TicketListing, alert_type: AlertType) -> str:
             "",
             f"${listing.effective_price} {price_label}",
             "",
-            "Behind home plate target section",
+            _location_line(listing, alert_type),
             *lounge_lines,
             "",
             f"Marketplace: {listing.provider}",
@@ -208,6 +210,11 @@ def format_alert(listing: TicketListing, alert_type: AlertType) -> str:
 
 
 def _lounge_lines(listing: TicketListing, alert_type: AlertType) -> list[str]:
+    if alert_type == AlertType.EVENT_LOW_PRICE:
+        return [
+            "SeatGeek event-level lowest price",
+            "Section, row, fees, and lounge access are unknown.",
+        ]
     if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL:
         return [
             listing.lounge_name or "Premium lounge or club",
@@ -230,6 +237,8 @@ def _format_whatsapp_price(listing: TicketListing) -> str:
 
 
 def _format_whatsapp_lounge_status(listing: TicketListing, alert_type: AlertType) -> str:
+    if alert_type == AlertType.EVENT_LOW_PRICE:
+        return "SeatGeek event-level price; section/lounge unknown"
     if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL:
         return f"{listing.lounge_name or 'Premium lounge or club'} explicitly mentioned"
     return "Premium section; lounge access not explicitly confirmed"
@@ -240,6 +249,8 @@ def _text_param(value: str) -> dict:
 
 
 def _pushover_title(listing: TicketListing, alert_type: AlertType) -> str:
+    if alert_type == AlertType.EVENT_LOW_PRICE:
+        return f"Yankees low price: ${listing.effective_price}"
     prefix = "Yankees lounge deal" if alert_type == AlertType.CONFIRMED_LOUNGE_DEAL else "Yankees premium deal"
     return f"{prefix}: ${listing.effective_price} Sec {listing.section or 'Unknown'}"
 
@@ -259,3 +270,9 @@ def _pushover_message(listing: TicketListing, alert_type: AlertType) -> str:
             "Verify ticket benefits before purchasing.",
         ]
     )[:1024]
+
+
+def _location_line(listing: TicketListing, alert_type: AlertType) -> str:
+    if alert_type == AlertType.EVENT_LOW_PRICE:
+        return "Event-level SeatGeek price"
+    return "Behind home plate target section"

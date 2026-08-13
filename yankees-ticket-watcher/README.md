@@ -70,7 +70,7 @@ LOUNGE_KEYWORDS=jim beam,club access,club level,lounge access,premium club,club 
 REQUIRE_CONFIRMED_LOUNGE=false
 REALERT_PRICE_DROP=5
 DATABASE_PATH=data/yankees_tickets.db
-TICKET_PROVIDER=mock
+TICKET_PROVIDER=seatgeek
 ALERT_PROVIDER=console
 ```
 
@@ -206,7 +206,7 @@ STUBHUB_CLIENT_SECRET
 Useful GitHub repository variables:
 
 ```text
-TICKET_PROVIDER=mock
+TICKET_PROVIDER=seatgeek
 MAX_PRICE=30
 TARGET_SECTIONS=317,318,319,320,321
 REQUIRE_CONFIRMED_LOUNGE=false
@@ -217,7 +217,7 @@ PUSHOVER_PRIORITY=0
 
 The workflow restores and saves the SQLite `data/` directory with the GitHub Actions cache so duplicate-alert suppression can survive across scheduled runs. GitHub cache persistence is good enough for a personal MVP, but it is not a permanent database.
 
-Important: the default workflow provider is `mock`, which proves the pipeline and will send simulated alerts. Change `TICKET_PROVIDER` before using it for real monitoring.
+The workflow defaults to `TICKET_PROVIDER=seatgeek`. SeatGeek's public API currently provides event-level `stats.lowest_price`, so Pushover alerts from this provider mean "this Yankees home game has a lowest listed price below your threshold." They do not confirm section, row, fees, or lounge access.
 
 ## Scheduler
 

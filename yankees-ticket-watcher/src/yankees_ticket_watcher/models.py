@@ -9,11 +9,14 @@ from enum import Enum
 class AlertType(str, Enum):
     CONFIRMED_LOUNGE_DEAL = "confirmed_lounge_deal"
     PREMIUM_SECTION_DEAL = "premium_section_deal"
+    EVENT_LOW_PRICE = "event_low_price"
 
     @property
     def title(self) -> str:
         if self is AlertType.CONFIRMED_LOUNGE_DEAL:
             return "Confirmed Lounge Deal"
+        if self is AlertType.EVENT_LOW_PRICE:
+            return "Event Low Price"
         return "Premium Section Deal"
 
 
@@ -69,4 +72,3 @@ class MatchResult:
     alert_type: AlertType | None
     listing: TicketListing
     reasons: tuple[str, ...]
-

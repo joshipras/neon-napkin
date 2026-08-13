@@ -19,7 +19,7 @@ jobs:
         working-directory: yankees-ticket-watcher
     env:
       DATABASE_PATH: data/yankees_tickets.db
-      TICKET_PROVIDER: ${{ vars.TICKET_PROVIDER || 'mock' }}
+      TICKET_PROVIDER: ${{ vars.TICKET_PROVIDER || 'seatgeek' }}
       MAX_PRICE: ${{ vars.MAX_PRICE || '30' }}
       TARGET_SECTIONS: ${{ vars.TARGET_SECTIONS || '317,318,319,320,321' }}
       PREMIUM_SECTIONS: ${{ vars.PREMIUM_SECTIONS || '317=Jim Beam Club area,318=Jim Beam Club area,319=Jim Beam Club area,320=Jim Beam Club area,321=Jim Beam Club area' }}

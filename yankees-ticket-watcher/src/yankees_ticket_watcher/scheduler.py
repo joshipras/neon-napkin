@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from yankees_ticket_watcher.config import Settings
 from yankees_ticket_watcher.database import TicketDatabase
 from yankees_ticket_watcher.matcher import TicketMatcher
+from yankees_ticket_watcher.models import AlertType
 from yankees_ticket_watcher.notifier import NotificationManager
 from yankees_ticket_watcher.providers.base import ProviderError, TicketProvider
 
@@ -57,28 +58,35 @@ class WatchScheduler:
                 continue
             listings_fetched += len(listings)
             for listing in listings:
-                result = self.matcher.evaluate(listing)
-                enriched = result.listing
+                if listing.section == "EVENT":
+                    enriched = listing
+                    result_qualifies = enriched.effective_price <= self.settings.max_price
+                    result_alert_type = AlertType.EVENT_LOW_PRICE if result_qualifies else None
+                else:
+                    result = self.matcher.evaluate(listing)
+                    enriched = result.listing
+                    result_qualifies = result.qualifies
+                    result_alert_type = result.alert_type
                 if enriched.section in self.settings.target_sections:
                     section_matches += 1
                 if enriched.effective_price <= self.settings.max_price:
                     under_threshold += 1
                 interesting = (
-                    result.qualifies
+                    result_qualifies
                     or enriched.section in self.settings.target_sections
                     or enriched.effective_price <= self.settings.max_price
                     or enriched.premium_section
                 )
                 if interesting:
                     self.database.save_observation(enriched)
-                if result.qualifies:
-                    if result.alert_type and self.database.should_alert(
+                if result_qualifies:
+                    if result_alert_type and self.database.should_alert(
                         enriched,
-                        result.alert_type,
+                        result_alert_type,
                         self.settings.realert_price_drop,
                     ):
-                        self.notifier.send_alert(enriched, result.alert_type)
-                        self.database.record_alert(enriched, result.alert_type)
+                        self.notifier.send_alert(enriched, result_alert_type)
+                        self.database.record_alert(enriched, result_alert_type)
                         new_alerts += 1
 
         LOGGER.info(
