@@ -7,6 +7,7 @@ from email.message import EmailMessage
 
 import httpx
 
+from yankees_ticket_watcher.arbitrage import OpportunityScore
 from yankees_ticket_watcher.config import Settings
 from yankees_ticket_watcher.models import AlertType, TicketListing
 
@@ -22,10 +23,16 @@ class NotificationProvider(ABC):
     def send_alert(self, listing: TicketListing, alert_type: AlertType) -> None:
         raise NotImplementedError
 
+    def send_opportunity(self, opportunity: OpportunityScore, settings: Settings) -> None:
+        return None
+
 
 class ConsoleNotificationProvider(NotificationProvider):
     def send_alert(self, listing: TicketListing, alert_type: AlertType) -> None:
         print(format_alert(listing, alert_type))
+
+    def send_opportunity(self, opportunity: OpportunityScore, settings: Settings) -> None:
+        print(format_opportunity_alert(opportunity))
 
 
 class EmailNotificationProvider(NotificationProvider):
@@ -104,6 +111,13 @@ class PushoverNotificationProvider(NotificationProvider):
             body.get("request"),
         )
 
+    def send_opportunity(self, opportunity: OpportunityScore, settings: Settings) -> None:
+        payload = build_pushover_opportunity_payload(opportunity, settings)
+        response = self.client.post(self.messages_url, data=payload)
+        if response.status_code >= 400:
+            raise NotificationError(f"Pushover API error {response.status_code}: {response.text[:300]}")
+        LOGGER.info("Pushover accepted opportunity alert for %s", opportunity.listing.listing_id)
+
 
 class NotificationManager:
     def __init__(self, providers: list[NotificationProvider]) -> None:
@@ -113,6 +127,14 @@ class NotificationManager:
         for provider in self.providers:
             try:
                 provider.send_alert(listing, alert_type)
+            except Exception:
+                LOGGER.exception("Notification provider %s failed", provider.__class__.__name__)
+                raise
+
+    def send_opportunity(self, opportunity: OpportunityScore, settings: Settings) -> None:
+        for provider in self.providers:
+            try:
+                provider.send_opportunity(opportunity, settings)
             except Exception:
                 LOGGER.exception("Notification provider %s failed", provider.__class__.__name__)
                 raise
@@ -150,6 +172,77 @@ def build_pushover_payload(
     if settings.pushover_device:
         payload["device"] = settings.pushover_device
     return payload
+
+
+def build_pushover_opportunity_payload(opportunity: OpportunityScore, settings: Settings) -> dict:
+    listing = opportunity.listing
+    priority = 1 if opportunity.score >= settings.high_priority_score else settings.pushover_priority
+    payload = {
+        "token": settings.pushover_app_token,
+        "user": settings.pushover_user_key,
+        "title": _opportunity_title(opportunity),
+        "message": format_opportunity_alert(opportunity),
+        "url": listing.purchase_url,
+        "url_title": "Buy manually",
+        "priority": str(priority),
+    }
+    if settings.pushover_device:
+        payload["device"] = settings.pushover_device
+    return payload
+
+
+def format_opportunity_alert(opportunity: OpportunityScore) -> str:
+    listing = opportunity.listing
+    status_line = (
+        "Purchase blocked by strategy rules."
+        if opportunity.purchase_blocked_by_inventory
+        else "Projected profit based on current asking prices. Actual resale is not guaranteed."
+    )
+    return "\n".join(
+        [
+            _opportunity_title(opportunity),
+            "",
+            f"Yankees vs {listing.opponent}",
+            _format_game_time(listing),
+            f"Section {listing.section or 'Unknown'} — Row {listing.row or 'Unknown'}",
+            "",
+            f"BUY: ${listing.effective_price} {'ALL-IN' if listing.all_in_price is not None else 'LISTED, FEES UNKNOWN'}",
+            "",
+            "Nearby asking prices:",
+            f"Median: ${opportunity.median_ask_price}",
+            f"P25: ${opportunity.p25_ask_price}",
+            f"Cheapest comparable: ${opportunity.minimum_comparable_ask_price}",
+            f"Comparables: {opportunity.number_of_comparables} ({opportunity.comparison_pool})",
+            "",
+            f"{percent(opportunity.discount_to_median)} below median ask",
+            f"Conservative resale ask: ${opportunity.conservative_resale_ask}",
+            f"Estimated seller fee: ${opportunity.expected_seller_fee}",
+            f"Expected payout: ${opportunity.expected_payout}",
+            f"EST. PROFIT: ${opportunity.expected_profit}",
+            f"EST. ROI: {percent(opportunity.expected_roi)}",
+            f"Confidence: {opportunity.confidence}",
+            f"Open inventory: {opportunity.open_inventory_count}",
+            "",
+            status_line,
+            "",
+            "BUY MANUALLY:",
+            listing.purchase_url,
+        ]
+    )[:1024]
+
+
+def _opportunity_title(opportunity: OpportunityScore) -> str:
+    listing = opportunity.listing
+    prefix = "OPPORTUNITY BLOCKED" if opportunity.purchase_blocked_by_inventory else "YANKEES MISPRICING"
+    return (
+        f"{prefix} — SCORE {opportunity.score} | "
+        f"${listing.effective_price} vs ${opportunity.median_ask_price} ask | "
+        f"~${opportunity.expected_profit} profit | {percent(opportunity.expected_roi)} ROI"
+    )
+
+
+def percent(value) -> str:
+    return f"{(value * 100).quantize(__import__('decimal').Decimal('0.1'))}%"
 
 
 def build_whatsapp_template_payload(

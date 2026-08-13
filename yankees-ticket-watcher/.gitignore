@@ -9,6 +9,8 @@ __pycache__/
 htmlcov/
 data/*.db
 data/*.db-*
+data/*debug*.txt
+data/debug_*.json
 !data/.gitkeep
 logs/*.log
 !logs/.gitkeep

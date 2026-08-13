@@ -6,6 +6,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+from yankees_ticket_watcher.arbitrage import OpportunityScore
 from yankees_ticket_watcher.models import AlertType, Game, TicketListing
 
 
@@ -77,6 +78,45 @@ class TicketDatabase:
 
             CREATE INDEX IF NOT EXISTS idx_alerts_listing
                 ON alerts(provider, listing_id, last_alerted_at);
+
+            CREATE TABLE IF NOT EXISTS inventory (
+                ticket_id TEXT PRIMARY KEY,
+                listing_id TEXT NOT NULL,
+                event_id TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                section TEXT,
+                row TEXT,
+                purchase_price TEXT NOT NULL,
+                purchase_datetime TEXT NOT NULL,
+                purchase_marketplace TEXT NOT NULL,
+                status TEXT NOT NULL,
+                purchase_url TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_inventory_status
+                ON inventory(status, event_id, section);
+
+            CREATE TABLE IF NOT EXISTS opportunity_snapshots (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                provider TEXT NOT NULL,
+                listing_id TEXT NOT NULL,
+                game_id TEXT NOT NULL,
+                observed_at TEXT NOT NULL,
+                score INTEGER NOT NULL,
+                confidence TEXT NOT NULL,
+                qualifies INTEGER NOT NULL,
+                expected_profit TEXT NOT NULL,
+                expected_roi TEXT NOT NULL,
+                discount_to_median TEXT NOT NULL,
+                comparison_pool TEXT NOT NULL,
+                snapshot_json TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_opportunity_snapshots_listing
+                ON opportunity_snapshots(provider, listing_id, observed_at);
             """
         )
         self._add_column_if_missing("ticket_observations", "lounge_access_detected", "INTEGER NOT NULL DEFAULT 0")
@@ -144,6 +184,120 @@ class TicketDatabase:
         }
         if column not in columns:
             self.connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+    def save_opportunity_snapshot(self, opportunity: OpportunityScore) -> int:
+        listing = opportunity.listing
+        now = _now_iso()
+        cursor = self.connection.execute(
+            """
+            INSERT INTO opportunity_snapshots (
+                provider, listing_id, game_id, observed_at, score, confidence, qualifies,
+                expected_profit, expected_roi, discount_to_median, comparison_pool, snapshot_json, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                listing.provider,
+                listing.listing_id,
+                listing.game_id,
+                _dt(listing.observed_at),
+                opportunity.score,
+                opportunity.confidence,
+                int(opportunity.qualifies),
+                _money(opportunity.expected_profit),
+                str(opportunity.expected_roi),
+                str(opportunity.discount_to_median),
+                opportunity.comparison_pool,
+                opportunity.snapshot_json(),
+                now,
+            ),
+        )
+        self.connection.commit()
+        return int(cursor.lastrowid)
+
+    def count_open_inventory(self) -> int:
+        row = self.connection.execute(
+            """
+            SELECT COUNT(*) AS count
+            FROM inventory
+            WHERE status IN ('PURCHASED', 'LISTED', 'WATCHING')
+            """
+        ).fetchone()
+        return int(row["count"]) if row else 0
+
+    def mark_purchased(self, listing_id: str, purchase_price: Decimal, marketplace: str = "SeatGeek") -> str:
+        latest = self.connection.execute(
+            """
+            SELECT * FROM ticket_observations
+            WHERE listing_id = ?
+            ORDER BY observed_at DESC, id DESC
+            LIMIT 1
+            """,
+            (listing_id,),
+        ).fetchone()
+        if latest is None:
+            raise ValueError(f"No observed listing found for listing_id={listing_id}")
+        now = _now_iso()
+        ticket_id = f"{latest['provider']}:{listing_id}"
+        self.connection.execute(
+            """
+            INSERT INTO inventory (
+                ticket_id, listing_id, event_id, provider, section, row, purchase_price,
+                purchase_datetime, purchase_marketplace, status, purchase_url, created_at, updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(ticket_id) DO UPDATE SET
+                purchase_price = excluded.purchase_price,
+                purchase_datetime = excluded.purchase_datetime,
+                purchase_marketplace = excluded.purchase_marketplace,
+                status = excluded.status,
+                updated_at = excluded.updated_at
+            """,
+            (
+                ticket_id,
+                listing_id,
+                latest["game_id"],
+                latest["provider"],
+                latest["section"],
+                latest["row"],
+                _money(purchase_price),
+                now,
+                marketplace,
+                "PURCHASED",
+                latest["purchase_url"],
+                now,
+                now,
+            ),
+        )
+        self.connection.commit()
+        return ticket_id
+
+    def get_inventory_ticket(self, ticket_id: str) -> sqlite3.Row | None:
+        return self.connection.execute(
+            "SELECT * FROM inventory WHERE ticket_id = ?",
+            (ticket_id,),
+        ).fetchone()
+
+    def latest_observations_for_game(self, game_id: str) -> list[sqlite3.Row]:
+        return list(
+            self.connection.execute(
+                """
+                SELECT t.*
+                FROM ticket_observations t
+                JOIN (
+                    SELECT provider, listing_id, MAX(observed_at) AS observed_at
+                    FROM ticket_observations
+                    WHERE game_id = ?
+                    GROUP BY provider, listing_id
+                ) latest
+                  ON latest.provider = t.provider
+                 AND latest.listing_id = t.listing_id
+                 AND latest.observed_at = t.observed_at
+                WHERE t.game_id = ?
+                """,
+                (game_id, game_id),
+            ).fetchall()
+        )
 
     def should_alert(self, listing: TicketListing, alert_type: AlertType, realert_price_drop: Decimal) -> bool:
         last = self.get_last_alert(listing.provider, listing.listing_id)

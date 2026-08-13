@@ -17,6 +17,13 @@ DEFAULT_PREMIUM_SECTIONS = {
     "320": "Jim Beam Club area",
     "321": "Jim Beam Club area",
 }
+DEFAULT_SECTION_NEIGHBORS = {
+    "317": ["318"],
+    "318": ["317", "319"],
+    "319": ["318", "320"],
+    "320": ["319", "321"],
+    "321": ["320"],
+}
 DEFAULT_LOUNGE_KEYWORDS = [
     "jim beam",
     "club access",
@@ -56,6 +63,7 @@ class Settings:
     check_interval_minutes: int = 10
     target_sections: set[str] = field(default_factory=lambda: set(DEFAULT_TARGET_SECTIONS))
     premium_sections: dict[str, str] = field(default_factory=lambda: dict(DEFAULT_PREMIUM_SECTIONS))
+    section_neighbors: dict[str, list[str]] = field(default_factory=lambda: dict(DEFAULT_SECTION_NEIGHBORS))
     lounge_keywords: list[str] = field(default_factory=lambda: list(DEFAULT_LOUNGE_KEYWORDS))
     confirmed_lounge_keywords: list[str] = field(default_factory=lambda: list(DEFAULT_CONFIRMED_LOUNGE_KEYWORDS))
     require_confirmed_lounge: bool = False
@@ -88,6 +96,22 @@ class Settings:
     pushover_user_key: str | None = None
     pushover_device: str | None = None
     pushover_priority: int = 0
+    max_row_distance: int = 5
+    min_comparable_listings: int = 5
+    min_discount_to_median: Decimal = Decimal("0.30")
+    min_expected_profit: Decimal = Decimal("10.00")
+    min_expected_roi: Decimal = Decimal("0.25")
+    seller_fee_rate: Decimal = Decimal("0.10")
+    additional_cost_buffer: Decimal = Decimal("2.00")
+    conservative_resale_multiplier: Decimal = Decimal("0.95")
+    base_resale_multiplier: Decimal = Decimal("0.90")
+    aggressive_resale_multiplier: Decimal = Decimal("0.96")
+    max_purchase_price: Decimal = Decimal("75.00")
+    max_open_tickets: int = 1
+    min_opportunity_score: int = 75
+    high_priority_score: int = 90
+    arbitrage_enabled: bool = True
+    seatgeek_event_price_filter_enabled: bool = False
 
 
 def load_settings(env_file: str | Path | None = ".env") -> Settings:
@@ -101,6 +125,7 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         check_interval_minutes=_int(values, "CHECK_INTERVAL_MINUTES", 10),
         target_sections=_csv_set(values.get("TARGET_SECTIONS"), DEFAULT_TARGET_SECTIONS),
         premium_sections=_section_map(values.get("PREMIUM_SECTIONS"), DEFAULT_PREMIUM_SECTIONS),
+        section_neighbors=_neighbors_map(values.get("SECTION_NEIGHBORS"), DEFAULT_SECTION_NEIGHBORS),
         lounge_keywords=_csv_list(values.get("LOUNGE_KEYWORDS"), DEFAULT_LOUNGE_KEYWORDS),
         confirmed_lounge_keywords=_csv_list(
             values.get("CONFIRMED_LOUNGE_KEYWORDS"),
@@ -135,6 +160,22 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         pushover_user_key=_optional(values.get("PUSHOVER_USER_KEY")),
         pushover_device=_optional(values.get("PUSHOVER_DEVICE")),
         pushover_priority=_int(values, "PUSHOVER_PRIORITY", 0),
+        max_row_distance=_int(values, "MAX_ROW_DISTANCE", 5),
+        min_comparable_listings=_int(values, "MIN_COMPARABLE_LISTINGS", 5),
+        min_discount_to_median=_decimal(values, "MIN_DISCOUNT_TO_MEDIAN", Decimal("0.30")),
+        min_expected_profit=_decimal(values, "MIN_EXPECTED_PROFIT", Decimal("10.00")),
+        min_expected_roi=_decimal(values, "MIN_EXPECTED_ROI", Decimal("0.25")),
+        seller_fee_rate=_decimal(values, "SELLER_FEE_RATE", Decimal("0.10")),
+        additional_cost_buffer=_decimal(values, "ADDITIONAL_COST_BUFFER", Decimal("2.00")),
+        conservative_resale_multiplier=_decimal(values, "CONSERVATIVE_RESALE_MULTIPLIER", Decimal("0.95")),
+        base_resale_multiplier=_decimal(values, "BASE_RESALE_MULTIPLIER", Decimal("0.90")),
+        aggressive_resale_multiplier=_decimal(values, "AGGRESSIVE_RESALE_MULTIPLIER", Decimal("0.96")),
+        max_purchase_price=_decimal(values, "MAX_PURCHASE_PRICE", Decimal("75.00")),
+        max_open_tickets=_int(values, "MAX_OPEN_TICKETS", 1),
+        min_opportunity_score=_int(values, "MIN_OPPORTUNITY_SCORE", 75),
+        high_priority_score=_int(values, "HIGH_PRIORITY_SCORE", 90),
+        arbitrage_enabled=_bool(values, "ARBITRAGE_ENABLED", True),
+        seatgeek_event_price_filter_enabled=_bool(values, "SEATGEEK_EVENT_PRICE_FILTER_ENABLED", False),
     )
     _validate(settings)
     return settings
@@ -219,6 +260,25 @@ def _section_map(raw: str | None, default: dict[str, str]) -> dict[str, str]:
     return parsed
 
 
+def _neighbors_map(raw: str | None, default: dict[str, list[str]]) -> dict[str, list[str]]:
+    if raw is None or raw.strip() == "":
+        return {section: list(neighbors) for section, neighbors in default.items()}
+    parsed: dict[str, list[str]] = {}
+    for part in raw.split(";"):
+        item = part.strip()
+        if not item:
+            continue
+        if "=" not in item:
+            raise ConfigError("SECTION_NEIGHBORS entries must look like 319=318|320")
+        section, neighbors = item.split("=", 1)
+        parsed[_normalize_section(section)] = [
+            _normalize_section(neighbor)
+            for neighbor in neighbors.split("|")
+            if neighbor.strip()
+        ]
+    return parsed
+
+
 def _normalize_section(section: str) -> str:
     return section.strip().upper()
 
@@ -230,6 +290,10 @@ def _validate(settings: Settings) -> None:
         raise ConfigError("CHECK_INTERVAL_MINUTES must be greater than zero")
     if settings.realert_price_drop <= 0:
         raise ConfigError("REALERT_PRICE_DROP must be greater than zero")
+    if settings.min_comparable_listings <= 0:
+        raise ConfigError("MIN_COMPARABLE_LISTINGS must be greater than zero")
+    if settings.max_open_tickets < 0:
+        raise ConfigError("MAX_OPEN_TICKETS cannot be negative")
     if not settings.target_sections:
         raise ConfigError("TARGET_SECTIONS must contain at least one section")
     if settings.email_enabled:

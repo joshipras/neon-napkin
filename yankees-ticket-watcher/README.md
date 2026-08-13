@@ -1,6 +1,6 @@
 # Yankees Ticket Watcher
 
-Yankees Ticket Watcher is a small Python 3.7+ tool that monitors resale tickets for New York Yankees home games at Yankee Stadium and alerts when a listing looks like a sub-$30 premium behind-home-plate deal.
+Yankees Ticket Watcher is a small Python 3.7+ tool that monitors resale tickets for New York Yankees home games at Yankee Stadium and alerts on cheap event-level prices or listing-level arbitrage opportunities when comparable-seat data is available.
 
 The MVP is fully runnable with mock data. Live marketplace adapters are isolated behind provider interfaces so matching, storage, notifications, and scheduling do not depend on one marketplace.
 
@@ -52,9 +52,42 @@ yankees-watch games --provider mock
 yankees-watch deals
 yankees-watch history
 yankees-watch test-alert
+yankees-watch purchased <listing_id> --price 29
+yankees-watch resale <ticket_id>
 ```
 
 `check` runs one pass. `run` monitors continuously. `deals` and `history` read from SQLite.
+
+## Arbitrage Mode
+
+By default the watcher now evaluates listing-level inventory for relative mispricings instead of relying only on an absolute `$30` threshold. Event-level SeatGeek fallback alerts still work separately, but true section/row listings are scored by nearby comparable asking prices.
+
+Core settings:
+
+```env
+ARBITRAGE_ENABLED=true
+MAX_ROW_DISTANCE=5
+MIN_COMPARABLE_LISTINGS=5
+MIN_DISCOUNT_TO_MEDIAN=0.30
+MIN_EXPECTED_PROFIT=10
+MIN_EXPECTED_ROI=0.25
+SELLER_FEE_RATE=0.10
+ADDITIONAL_COST_BUFFER=2
+MAX_PURCHASE_PRICE=75
+MAX_OPEN_TICKETS=1
+SECTION_NEIGHBORS=317=318;318=317|319;319=318|320;320=319|321;321=320
+```
+
+The detector uses current asking prices, not completed sales. Alerts say projected profit is based on asking prices and actual resale is not guaranteed.
+
+Manual purchase workflow:
+
+```bash
+yankees-watch purchased <listing_id> --price 29
+yankees-watch resale <ticket_id>
+```
+
+The app never automates SeatGeek checkout. The purchase provider is manual-only unless a future marketplace offers explicitly authorized transaction APIs.
 
 For SeatGeek payload diagnostics:
 

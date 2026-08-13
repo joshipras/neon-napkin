@@ -6,7 +6,13 @@ from decimal import Decimal
 
 from yankees_ticket_watcher.config import Settings
 from yankees_ticket_watcher.models import AlertType, TicketListing
-from yankees_ticket_watcher.notifier import build_pushover_payload, build_whatsapp_template_payload, format_alert
+from yankees_ticket_watcher.arbitrage import ArbitrageDetector
+from yankees_ticket_watcher.notifier import (
+    build_pushover_opportunity_payload,
+    build_pushover_payload,
+    build_whatsapp_template_payload,
+    format_alert,
+)
 from yankees_ticket_watcher.timezone_utils import get_timezone
 
 
@@ -103,3 +109,27 @@ def test_pushover_payload_uses_token_user_and_purchase_url() -> None:
     assert "Confirmed Lounge Deal" in payload["message"]
     assert "Yankees vs Red Sox" in payload["message"]
     assert len(payload["message"]) <= 1024
+
+
+def test_pushover_opportunity_payload_summarizes_profit_and_uses_high_priority() -> None:
+    settings = Settings(
+        pushover_enabled=True,
+        pushover_app_token="app-token",
+        pushover_user_key="user-key",
+    )
+    target = make_listing()
+    target = replace(target, listing_id="target", listed_price=Decimal("29.00"), all_in_price=Decimal("29.00"))
+    comparables = [
+        replace(make_listing(), listing_id=f"c-{index}", listed_price=Decimal(price), all_in_price=Decimal(price), row=str(index + 4))
+        for index, price in enumerate(["65", "68", "70", "72", "75", "77"])
+    ]
+    opportunity = ArbitrageDetector(settings).evaluate_listing(target, [target] + comparables)
+
+    assert opportunity is not None
+    payload = build_pushover_opportunity_payload(opportunity, settings)
+
+    assert payload["priority"] == "1"
+    assert payload["url"] == "https://example.com/ticket"
+    assert "YANKEES MISPRICING" in payload["title"]
+    assert "Projected profit based on current asking prices" in payload["message"]
+    assert "Actual resale is not guaranteed" in payload["message"]

@@ -43,10 +43,11 @@ class SeatGeekProvider(TicketProvider):
             "datetime_local.gte": now.strftime("%Y-%m-%dT%H:%M:%S"),
             "datetime_local.lte": until.strftime("%Y-%m-%dT%H:%M:%S"),
             "listing_count.gt": "0",
-            "lowest_price.lte": str(self.settings.max_price),
             "sort": "datetime_local.asc",
             "per_page": "50",
         }
+        if self.settings.seatgeek_event_price_filter_enabled:
+            params["lowest_price.lte"] = str(self.settings.max_price)
         if self.settings.seatgeek_client_secret:
             params["client_secret"] = self.settings.seatgeek_client_secret
         payload = self._get("/events", params=params)
@@ -69,7 +70,7 @@ class SeatGeekProvider(TicketProvider):
                         opponent=opponent,
                         game_datetime=game_dt,
                         event_url=event.get("url"),
-                        price_filter_matched=True,
+                        price_filter_matched=self.settings.seatgeek_event_price_filter_enabled,
                     )
                 )
             except (KeyError, TypeError, ValueError) as exc:

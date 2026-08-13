@@ -106,7 +106,7 @@ class PriceFilterMatchNoStatsClient:
 
 
 def test_seatgeek_provider_maps_event_lowest_price_to_event_listing() -> None:
-    settings = Settings(seatgeek_client_id="client-id")
+    settings = Settings(seatgeek_client_id="client-id", seatgeek_event_price_filter_enabled=True)
     provider = SeatGeekProvider(settings, client=FakeSeatGeekClient())
 
     game = provider.get_yankees_home_games()[0]
@@ -147,7 +147,7 @@ def test_seatgeek_provider_uses_search_response_price_stats_first() -> None:
 
 
 def test_seatgeek_provider_alerts_when_price_filter_matches_but_exact_price_is_hidden() -> None:
-    settings = Settings(seatgeek_client_id="client-id")
+    settings = Settings(seatgeek_client_id="client-id", seatgeek_event_price_filter_enabled=True)
     provider = SeatGeekProvider(settings, client=PriceFilterMatchNoStatsClient())
 
     game = provider.get_yankees_home_games()[0]

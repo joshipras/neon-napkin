@@ -90,3 +90,18 @@ def test_current_deals_uses_latest_observation(tmp_path) -> None:
 
     assert len(rows) == 1
     assert rows[0]["section"] == "319"
+
+
+def test_mark_purchased_tracks_open_inventory(tmp_path) -> None:
+    db = TicketDatabase(tmp_path / "tickets.db")
+    db.initialize()
+    listing = make_listing("29.00")
+    db.save_observation(listing)
+
+    ticket_id = db.mark_purchased(listing.listing_id, Decimal("29.00"))
+    ticket = db.get_inventory_ticket(ticket_id)
+
+    assert ticket is not None
+    assert ticket["status"] == "PURCHASED"
+    assert db.count_open_inventory() == 1
+    db.close()

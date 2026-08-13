@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 
+from yankees_ticket_watcher.arbitrage import ArbitrageDetector
 from yankees_ticket_watcher.config import ConfigError, Settings, load_settings
 from yankees_ticket_watcher.database import TicketDatabase
 from yankees_ticket_watcher.diagnostics import run_seatgeek_debug
@@ -64,6 +65,13 @@ def main(argv: list[str] | None = None) -> int:
             listing = _test_listing(settings)
             notifier.send_alert(listing, AlertType.CONFIRMED_LOUNGE_DEAL)
             return 0
+        if args.command == "purchased":
+            ticket_id = db.mark_purchased(args.listing_id, Decimal(args.price), args.marketplace)
+            print(f"Marked purchased: {ticket_id}")
+            return 0
+        if args.command == "resale":
+            _print_resale_recommendation(db, settings, args.ticket_id)
+            return 0
     except ProviderError as exc:
         print(f"Provider error: {exc}")
         return 1
@@ -91,6 +99,12 @@ def build_parser() -> argparse.ArgumentParser:
     history = subparsers.add_parser("history")
     history.add_argument("--limit", type=int, default=20)
     subparsers.add_parser("test-alert")
+    purchased = subparsers.add_parser("purchased")
+    purchased.add_argument("listing_id")
+    purchased.add_argument("--price", required=True)
+    purchased.add_argument("--marketplace", default="SeatGeek")
+    resale = subparsers.add_parser("resale")
+    resale.add_argument("ticket_id")
     return parser
 
 
@@ -134,4 +148,65 @@ def _test_listing(settings: Settings) -> TicketListing:
         listing_text="Includes Jim Beam Club access",
         purchase_url="https://example.com/test-ticket",
         observed_at=now,
+    )
+
+
+def _print_resale_recommendation(db: TicketDatabase, settings: Settings, ticket_id: str) -> None:
+    ticket = db.get_inventory_ticket(ticket_id)
+    if ticket is None:
+        print(f"No inventory ticket found for {ticket_id}")
+        return
+    observations = [_row_to_listing(row) for row in db.latest_observations_for_game(ticket["event_id"])]
+    target = TicketListing(
+        provider=ticket["provider"],
+        listing_id=ticket["listing_id"],
+        game_id=ticket["event_id"],
+        opponent="Purchased ticket",
+        game_datetime=datetime.now(settings.timezone) + timedelta(hours=1),
+        section=ticket["section"],
+        row=ticket["row"],
+        quantity=1,
+        listed_price=Decimal(str(ticket["purchase_price"])),
+        all_in_price=Decimal(str(ticket["purchase_price"])),
+        premium_section=bool(ticket["section"] in settings.premium_sections),
+        lounge_access_confirmed=False,
+        lounge_name=settings.premium_sections.get(ticket["section"]),
+        listing_text=None,
+        purchase_url=ticket["purchase_url"] or "",
+        observed_at=datetime.now(settings.timezone),
+    )
+    result = ArbitrageDetector(settings).evaluate_listing(target, observations, open_inventory_count=db.count_open_inventory())
+    if result is None or result.number_of_comparables == 0:
+        print("Not enough comparable observations for a resale recommendation yet.")
+        return
+    print(f"Ticket: {ticket_id}")
+    print(f"Purchase: ${ticket['purchase_price']}")
+    print(f"Current comparable median ask: ${result.median_ask_price}")
+    print(f"Current comparable p25 ask: ${result.p25_ask_price}")
+    print(f"Cheapest comparable ask: ${result.minimum_comparable_ask_price}")
+    print(f"Recommended listing ask: ${result.conservative_resale_ask}")
+    print(f"Expected payout after seller fee: ${result.expected_payout}")
+    print(f"Projected profit based on asking prices: ${result.expected_profit}")
+    print("Actual resale is not guaranteed.")
+
+
+def _row_to_listing(row) -> TicketListing:
+    return TicketListing(
+        provider=row["provider"],
+        listing_id=row["listing_id"],
+        game_id=row["game_id"],
+        opponent=row["opponent"],
+        game_datetime=datetime.fromisoformat(row["game_datetime"]),
+        section=row["section"],
+        row=row["row"],
+        quantity=row["quantity"],
+        listed_price=Decimal(str(row["listed_price"])),
+        all_in_price=Decimal(str(row["all_in_price"])) if row["all_in_price"] is not None else None,
+        premium_section=bool(row["premium_section"]),
+        lounge_access_confirmed=bool(row["lounge_access_confirmed"]),
+        lounge_name=row["lounge_name"],
+        listing_text=row["listing_text"],
+        purchase_url=row["purchase_url"],
+        observed_at=datetime.fromisoformat(row["observed_at"]),
+        lounge_access_detected=bool(row["lounge_access_detected"]),
     )

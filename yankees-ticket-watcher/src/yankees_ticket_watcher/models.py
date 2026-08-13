@@ -10,6 +10,7 @@ class AlertType(str, Enum):
     CONFIRMED_LOUNGE_DEAL = "confirmed_lounge_deal"
     PREMIUM_SECTION_DEAL = "premium_section_deal"
     EVENT_LOW_PRICE = "event_low_price"
+    ARBITRAGE_OPPORTUNITY = "arbitrage_opportunity"
 
     @property
     def title(self) -> str:
@@ -17,6 +18,8 @@ class AlertType(str, Enum):
             return "Confirmed Lounge Deal"
         if self is AlertType.EVENT_LOW_PRICE:
             return "Event Low Price"
+        if self is AlertType.ARBITRAGE_OPPORTUNITY:
+            return "Arbitrage Opportunity"
         return "Premium Section Deal"
 
 

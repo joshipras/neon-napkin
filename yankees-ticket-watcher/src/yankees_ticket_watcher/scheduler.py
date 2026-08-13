@@ -4,6 +4,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 
+from yankees_ticket_watcher.arbitrage import ArbitrageDetector
 from yankees_ticket_watcher.config import Settings
 from yankees_ticket_watcher.database import TicketDatabase
 from yankees_ticket_watcher.matcher import TicketMatcher
@@ -29,6 +30,7 @@ class WatchScheduler:
         self.matcher = matcher
         self.notifier = notifier
         self.last_checked_by_game: dict[str, datetime] = {}
+        self.arbitrage = ArbitrageDetector(settings)
 
     def run_once(self) -> int:
         now = datetime.now(self.settings.timezone)
@@ -57,6 +59,7 @@ class WatchScheduler:
                 LOGGER.exception("Provider error fetching listings for %s", game.game_id)
                 continue
             listings_fetched += len(listings)
+            enriched_listings = []
             for listing in listings:
                 if listing.section == "EVENT":
                     enriched = listing
@@ -65,20 +68,14 @@ class WatchScheduler:
                 else:
                     result = self.matcher.evaluate(listing)
                     enriched = result.listing
-                    result_qualifies = result.qualifies
-                    result_alert_type = result.alert_type
+                    result_qualifies = False if self.settings.arbitrage_enabled else result.qualifies
+                    result_alert_type = None if self.settings.arbitrage_enabled else result.alert_type
                 if enriched.section in self.settings.target_sections:
                     section_matches += 1
                 if enriched.effective_price <= self.settings.max_price:
                     under_threshold += 1
-                interesting = (
-                    result_qualifies
-                    or enriched.section in self.settings.target_sections
-                    or enriched.effective_price <= self.settings.max_price
-                    or enriched.premium_section
-                )
-                if interesting:
-                    self.database.save_observation(enriched)
+                self.database.save_observation(enriched)
+                enriched_listings.append(enriched)
                 if result_qualifies:
                     if result_alert_type and self.database.should_alert(
                         enriched,
@@ -87,6 +84,29 @@ class WatchScheduler:
                     ):
                         self.notifier.send_alert(enriched, result_alert_type)
                         self.database.record_alert(enriched, result_alert_type)
+                        new_alerts += 1
+
+            if self.settings.arbitrage_enabled and any(listing.section != "EVENT" for listing in enriched_listings):
+                open_inventory_count = self.database.count_open_inventory()
+                opportunities = self.arbitrage.evaluate_event(
+                    enriched_listings,
+                    open_inventory_count=open_inventory_count,
+                )
+                for opportunity in opportunities:
+                    self.database.save_opportunity_snapshot(opportunity)
+                    should_notify_blocked = (
+                        opportunity.purchase_blocked_by_inventory
+                        and set(opportunity.rejection_reasons) == {"max_open_tickets_reached"}
+                    )
+                    if not opportunity.qualifies and not should_notify_blocked:
+                        continue
+                    if self.database.should_alert(
+                        opportunity.listing,
+                        AlertType.ARBITRAGE_OPPORTUNITY,
+                        self.settings.realert_price_drop,
+                    ):
+                        self.notifier.send_opportunity(opportunity, self.settings)
+                        self.database.record_alert(opportunity.listing, AlertType.ARBITRAGE_OPPORTUNITY)
                         new_alerts += 1
 
         LOGGER.info(
