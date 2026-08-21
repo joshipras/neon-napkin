@@ -16,7 +16,13 @@ export class SpectrumVisualizer extends CanvasVisualizer {
 
   resize(width: number, height: number, dpr: number) {
     super.resize(width, height, dpr);
-    this.activeBars = Math.max(45, Math.min(70, Math.round(width / 29)));
+    if (width < 520) {
+      this.activeBars = Math.max(22, Math.min(34, Math.round(width / 16)));
+    } else if (width < 900) {
+      this.activeBars = Math.max(34, Math.min(50, Math.round(width / 18)));
+    } else {
+      this.activeBars = Math.max(45, Math.min(70, Math.round(width / 29)));
+    }
     this.activeSegments = Math.max(22, Math.min(34, Math.round(height / 14)));
     this.background = this.createBackground(width, height);
   }
@@ -32,8 +38,8 @@ export class SpectrumVisualizer extends CanvasVisualizer {
     const spectrumHeight = floor - top;
     const sidePad = Math.max(16, width * 0.025);
     const usable = width - sidePad * 2;
-    const gap = Math.max(3, Math.min(6, Math.floor((usable / this.activeBars) * 0.18)));
-    const barWidth = Math.max(8, Math.floor((usable - gap * (this.activeBars - 1)) / this.activeBars));
+    const gap = Math.max(width < 520 ? 2 : 3, Math.min(width < 520 ? 4 : 6, Math.floor((usable / this.activeBars) * 0.18)));
+    const barWidth = Math.max(3, Math.floor((usable - gap * (this.activeBars - 1)) / this.activeBars));
     const segmentGap = Math.max(1, Math.min(3, Math.floor(spectrumHeight / 170)));
     const segmentHeight = Math.max(3, Math.floor((spectrumHeight - segmentGap * (this.activeSegments - 1)) / this.activeSegments));
 

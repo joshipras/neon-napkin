@@ -49,8 +49,9 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
     if (!canvas || !visualizer) return;
     const shell = spectrumShellRef.current;
     const rect = shell?.getBoundingClientRect();
-    const width = Math.max(320, Math.floor(rect?.width || window.innerWidth));
-    const height = Math.max(160, Math.floor(rect?.height || window.innerHeight * 0.4));
+    const narrowViewport = window.innerWidth <= 960;
+    const width = Math.max(narrowViewport ? 1 : 320, Math.floor(rect?.width || window.innerWidth));
+    const height = Math.max(narrowViewport ? 120 : 160, Math.floor(rect?.height || window.innerHeight * 0.4));
     const rawDpr = Math.min(window.devicePixelRatio || 1, 1.25);
     const maxPixels = 2_000_000;
     const pixelCount = width * height * rawDpr * rawDpr;
@@ -212,6 +213,8 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
     rafRef.current = requestAnimationFrame(render);
 
     window.addEventListener("resize", resize);
+    window.addEventListener("orientationchange", resize);
+    window.visualViewport?.addEventListener("resize", resize);
     return () => {
       cancelled = true;
       cancelAnimationFrame(rafRef.current);
@@ -220,6 +223,8 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
       activeSourceRef.current = null;
       visualizerRef.current?.destroy();
       window.removeEventListener("resize", resize);
+      window.removeEventListener("orientationchange", resize);
+      window.visualViewport?.removeEventListener("resize", resize);
     };
   // The animation loop intentionally reads live refs. Including loop helpers here
   // would restart microphone capture when UI-only state changes.

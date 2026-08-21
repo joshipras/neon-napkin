@@ -63,11 +63,11 @@ const WinampPlayer = forwardRef<MiniSpectrumHandle, WinampPlayerProps>(function 
             <div className="wa-track-display">
               <span>001. LIVE KARAOKE - MICROPHONE INPUT - VISUALIZE.FM</span>
             </div>
-            <div className="wa-meta-box">
+            <div className="wa-meta-box wa-kbps">
               <strong>128</strong>
               <span>kbps</span>
             </div>
-            <div className="wa-meta-box">
+            <div className="wa-meta-box wa-khz">
               <strong>44</strong>
               <span>kHz</span>
             </div>
