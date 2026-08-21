@@ -1,0 +1,17 @@
+{
+  "name": "Visualize.fm",
+  "short_name": "Visualize.fm",
+  "description": "Retro music visualizer for karaoke, parties, living rooms, and TVs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030406",
+  "theme_color": "#030406",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

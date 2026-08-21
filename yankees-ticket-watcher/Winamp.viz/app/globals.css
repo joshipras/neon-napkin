@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Arial Narrow", "Helvetica Neue", monospace;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --green: #39ff14;
+  --amber: #ffb000;
+  --hot: #ff30c2;
+  --cyan: #25f7ff;
+  --ink: #030406;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--ink);
+  color: #f7fff4;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-mono);
+  text-rendering: geometricPrecision;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.crt-shell {
+  position: relative;
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(57, 255, 20, 0.15), transparent 28rem),
+    radial-gradient(circle at 82% 10%, rgba(255, 48, 194, 0.14), transparent 24rem),
+    radial-gradient(circle at 48% 90%, rgba(37, 247, 255, 0.12), transparent 22rem),
+    #030406;
+}
+
+.crt-shell::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 50%, rgba(0, 0, 0, 0.12) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.035), rgba(0, 255, 0, 0.018), rgba(0, 0, 255, 0.035));
+  background-size: 100% 4px, 6px 100%;
+  mix-blend-mode: screen;
+  opacity: 0.45;
+}
+
+.grid-floor {
+  background-image:
+    linear-gradient(rgba(37, 247, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.1) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 86%, transparent);
+}
+
+.bevel {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-right-color: rgba(0, 0, 0, 0.75);
+  border-bottom-color: rgba(0, 0, 0, 0.75);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04)),
+    rgba(10, 15, 18, 0.82);
+  box-shadow: inset 1px 1px rgba(255, 255, 255, 0.22), inset -1px -1px rgba(0, 0, 0, 0.7);
+}
+
+.pixel-title {
+  font-family: var(--font-display);
+  letter-spacing: 0;
+  text-shadow:
+    0 0 8px rgba(57, 255, 20, 0.95),
+    0 0 26px rgba(57, 255, 20, 0.42),
+    3px 3px 0 rgba(255, 48, 194, 0.75);
+}
+
+.led {
+  box-shadow: 0 0 14px currentColor, inset 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+.visualizer-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.visualizer-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hide-cursor {
+  cursor: none;
+}
+
+.panel-text {
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
