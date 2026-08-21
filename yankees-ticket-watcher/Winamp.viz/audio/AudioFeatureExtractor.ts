@@ -16,6 +16,51 @@ const MODE_GAIN: Record<ExperienceMode, number> = {
   chaos: 1.45
 };
 
+const NOISE_CONFIG: Record<
+  ExperienceMode,
+  {
+    margin: number;
+    subBassExtraMargin: number;
+    rmsMargin: number;
+    knee: number;
+    outputGain: number;
+    quietRms: number;
+  }
+> = {
+  chill: {
+    margin: 0.018,
+    subBassExtraMargin: 0.014,
+    rmsMargin: 0.006,
+    knee: 0.05,
+    outputGain: 1.55,
+    quietRms: 0.022
+  },
+  party: {
+    margin: 0.026,
+    subBassExtraMargin: 0.024,
+    rmsMargin: 0.008,
+    knee: 0.055,
+    outputGain: 1.78,
+    quietRms: 0.028
+  },
+  karaoke: {
+    margin: 0.034,
+    subBassExtraMargin: 0.03,
+    rmsMargin: 0.009,
+    knee: 0.052,
+    outputGain: 1.95,
+    quietRms: 0.032
+  },
+  chaos: {
+    margin: 0.022,
+    subBassExtraMargin: 0.018,
+    rmsMargin: 0.007,
+    knee: 0.048,
+    outputGain: 1.75,
+    quietRms: 0.026
+  }
+};
+
 export function clamp01(value: number) {
   if (Number.isNaN(value) || !Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
@@ -24,6 +69,11 @@ export function clamp01(value: number) {
 export function smoothValue(previous: number, next: number, attack = 0.38, release = 0.11) {
   const amount = next > previous ? attack : release;
   return previous + (next - previous) * amount;
+}
+
+export function smoothstep(edge0: number, edge1: number, value: number) {
+  const t = clamp01((value - edge0) / Math.max(0.000001, edge1 - edge0));
+  return t * t * (3 - 2 * t);
 }
 
 export function rmsFromTimeDomain(timeData: Uint8Array) {
@@ -36,10 +86,9 @@ export function rmsFromTimeDomain(timeData: Uint8Array) {
   return Math.sqrt(sum / timeData.length);
 }
 
-export function bandEnergy(
+function rawBandEnergy(
   frequencyData: Uint8Array,
   sampleRate: number,
-  fftSize: number,
   minHz: number,
   maxHz: number
 ) {
@@ -59,15 +108,52 @@ export function bandEnergy(
   }
 
   const normalized = weight > 0 ? sum / weight : 0;
+  return clamp01(normalized);
+}
+
+function shapeBandEnergy(normalized: number, fftSize: number) {
   const fftBoost = Math.min(1.12, 2048 / fftSize + 0.12);
   return clamp01(Math.pow(normalized * fftBoost, 0.74));
+}
+
+export function bandEnergy(
+  frequencyData: Uint8Array,
+  sampleRate: number,
+  fftSize: number,
+  minHz: number,
+  maxHz: number
+) {
+  return shapeBandEnergy(rawBandEnergy(frequencyData, sampleRate, minHz, maxHz), fftSize);
+}
+
+export function applySoftNoiseGate(value: number, floor: number, margin: number, knee: number, outputGain = 1) {
+  const excess = Math.max(0, value - floor - margin);
+  const gate = smoothstep(0, knee, excess);
+  return clamp01(excess * gate * outputGain);
 }
 
 export class AudioFeatureExtractor {
   private readonly beatDetector = new BeatDetector();
   private readonly spectrum: Float32Array;
   private readonly waveform: Float32Array;
+  private readonly spectrumNoiseFloor: Float32Array;
+  private readonly bandNoiseFloor = {
+    bass: 0,
+    lowMid: 0,
+    mid: 0,
+    highMid: 0,
+    treble: 0,
+    rms: 0
+  };
   private frame: AudioFrame;
+  private floorFrames = 0;
+  private diagnostics = {
+    rawRms: 0,
+    gatedRms: 0,
+    estimatedNoiseFloor: 0,
+    rawBass: 0,
+    gatedBass: 0
+  };
 
   constructor(
     private readonly sampleRate: number,
@@ -77,13 +163,22 @@ export class AudioFeatureExtractor {
   ) {
     this.spectrum = new Float32Array(spectrumBins);
     this.waveform = new Float32Array(waveformBins);
+    this.spectrumNoiseFloor = new Float32Array(spectrumBins);
     this.frame = this.createEmptyFrame();
   }
 
   reset() {
     this.beatDetector.reset();
     this.spectrum.fill(0);
+    this.spectrumNoiseFloor.fill(0);
     this.waveform.fill(0);
+    this.bandNoiseFloor.bass = 0;
+    this.bandNoiseFloor.lowMid = 0;
+    this.bandNoiseFloor.mid = 0;
+    this.bandNoiseFloor.highMid = 0;
+    this.bandNoiseFloor.treble = 0;
+    this.bandNoiseFloor.rms = 0;
+    this.floorFrames = 0;
     this.frame = this.createEmptyFrame();
   }
 
@@ -95,19 +190,71 @@ export class AudioFeatureExtractor {
     mode: ExperienceMode = "party"
   ): AudioFrame {
     const gain = sensitivity * MODE_GAIN[mode];
-    const rawVolume = clamp01(Math.pow(rmsFromTimeDomain(timeData) * 3.2 * gain, 0.74));
-    const bassRaw = clamp01(bandEnergy(frequencyData, this.sampleRate, this.fftSize, ...BAND_RANGES.bass) * gain);
-    const lowMidRaw = clamp01(bandEnergy(frequencyData, this.sampleRate, this.fftSize, ...BAND_RANGES.lowMid) * gain);
-    const midRaw = clamp01(bandEnergy(frequencyData, this.sampleRate, this.fftSize, ...BAND_RANGES.mid) * gain);
-    const highMidRaw = clamp01(bandEnergy(frequencyData, this.sampleRate, this.fftSize, ...BAND_RANGES.highMid) * gain);
-    const trebleRaw = clamp01(bandEnergy(frequencyData, this.sampleRate, this.fftSize, ...BAND_RANGES.treble) * gain);
+    const config = NOISE_CONFIG[mode];
+    const rawRms = rmsFromTimeDomain(timeData);
+    this.floorFrames += 1;
+
+    this.bandNoiseFloor.rms = this.updateNoiseFloor(this.bandNoiseFloor.rms, rawRms, rawRms, config);
+    const rmsExcess = Math.max(0, rawRms - this.bandNoiseFloor.rms);
+    const globalActivity = smoothstep(0, config.rmsMargin * 3.5, rmsExcess);
+    const gatedRmsLinear = applySoftNoiseGate(rawRms, this.bandNoiseFloor.rms, config.rmsMargin, config.knee * 0.62, 7.8);
+    const rawVolume = clamp01(Math.pow(gatedRmsLinear * gain, 0.74));
+
+    const bassLinear = rawBandEnergy(frequencyData, this.sampleRate, ...BAND_RANGES.bass);
+    const lowMidLinear = rawBandEnergy(frequencyData, this.sampleRate, ...BAND_RANGES.lowMid);
+    const midLinear = rawBandEnergy(frequencyData, this.sampleRate, ...BAND_RANGES.mid);
+    const highMidLinear = rawBandEnergy(frequencyData, this.sampleRate, ...BAND_RANGES.highMid);
+    const trebleLinear = rawBandEnergy(frequencyData, this.sampleRate, ...BAND_RANGES.treble);
+
+    this.bandNoiseFloor.bass = this.updateNoiseFloor(this.bandNoiseFloor.bass, bassLinear, rawRms, config);
+    this.bandNoiseFloor.lowMid = this.updateNoiseFloor(this.bandNoiseFloor.lowMid, lowMidLinear, rawRms, config);
+    this.bandNoiseFloor.mid = this.updateNoiseFloor(this.bandNoiseFloor.mid, midLinear, rawRms, config);
+    this.bandNoiseFloor.highMid = this.updateNoiseFloor(this.bandNoiseFloor.highMid, highMidLinear, rawRms, config);
+    this.bandNoiseFloor.treble = this.updateNoiseFloor(this.bandNoiseFloor.treble, trebleLinear, rawRms, config);
+
+    const bassGated =
+      applySoftNoiseGate(
+        bassLinear,
+        this.bandNoiseFloor.bass,
+        config.margin + config.subBassExtraMargin,
+        config.knee,
+        config.outputGain * 1.06
+      ) * globalActivity;
+    const lowMidGated =
+      applySoftNoiseGate(lowMidLinear, this.bandNoiseFloor.lowMid, config.margin, config.knee, config.outputGain) * globalActivity;
+    const midGated =
+      applySoftNoiseGate(midLinear, this.bandNoiseFloor.mid, config.margin * 0.82, config.knee, config.outputGain * 1.08) *
+      globalActivity;
+    const highMidGated =
+      applySoftNoiseGate(highMidLinear, this.bandNoiseFloor.highMid, config.margin * 0.76, config.knee, config.outputGain) *
+      globalActivity;
+    const trebleGated =
+      applySoftNoiseGate(trebleLinear, this.bandNoiseFloor.treble, config.margin * 0.72, config.knee, config.outputGain * 0.94) *
+      globalActivity;
+
+    const bassRaw = clamp01(shapeBandEnergy(bassGated, this.fftSize) * gain);
+    const lowMidRaw = clamp01(shapeBandEnergy(lowMidGated, this.fftSize) * gain);
+    const midRaw = clamp01(shapeBandEnergy(midGated, this.fftSize) * gain);
+    const highMidRaw = clamp01(shapeBandEnergy(highMidGated, this.fftSize) * gain);
+    const trebleRaw = clamp01(shapeBandEnergy(trebleGated, this.fftSize) * gain);
 
     for (let i = 0; i < this.spectrumBins; i += 1) {
       const sourceIndex = Math.min(
         frequencyData.length - 1,
         Math.floor(Math.pow(i / this.spectrumBins, 1.82) * frequencyData.length)
       );
-      const next = clamp01(Math.pow((frequencyData[sourceIndex] / 255) * gain, 0.7));
+      const sourceLinear = frequencyData[sourceIndex] / 255;
+      const frequencyRatio = sourceIndex / Math.max(1, frequencyData.length - 1);
+      const lowFrequencyPenalty = frequencyRatio < 0.055 ? config.subBassExtraMargin * (1 - frequencyRatio / 0.055) : 0;
+      this.spectrumNoiseFloor[i] = this.updateNoiseFloor(this.spectrumNoiseFloor[i], sourceLinear, rawRms, config);
+      const gated = applySoftNoiseGate(
+        sourceLinear,
+        this.spectrumNoiseFloor[i],
+        config.margin + lowFrequencyPenalty,
+        config.knee,
+        config.outputGain
+      );
+      const next = clamp01(Math.pow(gated * globalActivity * gain, 0.7));
       this.spectrum[i] = smoothValue(this.spectrum[i], next, 0.48, 0.12);
     }
 
@@ -129,7 +276,44 @@ export class AudioFeatureExtractor {
     this.frame.beatIntensity = beat.beatIntensity;
     this.frame.timestamp = timestamp;
 
+    this.diagnostics.rawRms = rawRms;
+    this.diagnostics.gatedRms = this.frame.volume;
+    this.diagnostics.estimatedNoiseFloor = this.estimateNoiseFloor();
+    this.diagnostics.rawBass = clamp01(shapeBandEnergy(bassLinear, this.fftSize) * gain);
+    this.diagnostics.gatedBass = this.frame.bass;
+
     return this.frame;
+  }
+
+  getDiagnostics() {
+    return this.diagnostics;
+  }
+
+  private updateNoiseFloor(
+    previous: number,
+    next: number,
+    rawRms: number,
+    config: (typeof NOISE_CONFIG)[ExperienceMode]
+  ) {
+    const learningQuietRoom = this.floorFrames < 120 && rawRms < config.quietRms;
+    const closeToFloor = next < previous + config.margin * 2.3;
+    const rise = learningQuietRoom ? 0.08 : closeToFloor ? 0.008 : 0.0008;
+    const fall = 0.0025;
+    const amount = next > previous ? rise : fall;
+    return clamp01(previous + (next - previous) * amount);
+  }
+
+  private estimateNoiseFloor() {
+    let spectrumSum = 0;
+    const sampleBins = Math.min(32, this.spectrumNoiseFloor.length);
+    for (let i = 0; i < sampleBins; i += 1) spectrumSum += this.spectrumNoiseFloor[i];
+    const spectrumFloor = sampleBins > 0 ? spectrumSum / sampleBins : 0;
+    return clamp01(
+      spectrumFloor * 0.45 +
+        this.bandNoiseFloor.rms * 0.2 +
+        this.bandNoiseFloor.bass * 0.2 +
+        this.bandNoiseFloor.mid * 0.15
+    );
   }
 
   private createEmptyFrame(): AudioFrame {

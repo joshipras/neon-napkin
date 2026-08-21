@@ -19,6 +19,19 @@ export interface AudioSourceDiagnostics {
   maxFftBin: number;
   dataChanged: boolean;
   rms: number;
+  rawRms?: number;
+  gatedRms?: number;
+  estimatedNoiseFloor?: number;
+  rawBass?: number;
+  gatedBass?: number;
+  analyserMinDecibels?: number;
+  analyserMaxDecibels?: number;
+  analyserSmoothing?: number;
+  microphoneSettings?: {
+    autoGainControl?: boolean;
+    noiseSuppression?: boolean;
+    echoCancellation?: boolean;
+  };
 }
 
 export interface SerializedAudioFrame {

@@ -119,8 +119,17 @@ const WinampPlayer = forwardRef<MiniSpectrumHandle, WinampPlayerProps>(function 
       {debug && (
         <div className="wa-debug">
           FPS {Math.round(fps)} · AUDIO {(diagnostics?.audioState ?? "idle").toUpperCase()} · RMS{" "}
-          {(diagnostics?.rms ?? 0).toFixed(3)} · FFT {(diagnostics?.maxFftBin ?? 0).toFixed(3)} ·{" "}
-          {diagnostics?.dataChanged ? "DATA CHANGING" : "DATA STATIC"} · {source.toUpperCase()}
+          {(diagnostics?.rawRms ?? diagnostics?.rms ?? 0).toFixed(3)}→
+          {(diagnostics?.gatedRms ?? diagnostics?.rms ?? 0).toFixed(3)} · FLOOR{" "}
+          {(diagnostics?.estimatedNoiseFloor ?? 0).toFixed(3)} · BASS{" "}
+          {(diagnostics?.rawBass ?? 0).toFixed(3)}→{(diagnostics?.gatedBass ?? 0).toFixed(3)} · AGC{" "}
+          {diagnostics?.microphoneSettings?.autoGainControl === undefined
+            ? "?"
+            : diagnostics.microphoneSettings.autoGainControl
+              ? "ON"
+              : "OFF"}{" "}
+          · FFT {(diagnostics?.maxFftBin ?? 0).toFixed(3)} · {diagnostics?.dataChanged ? "DATA CHANGING" : "DATA STATIC"} ·{" "}
+          {source.toUpperCase()}
         </div>
       )}
     </section>
