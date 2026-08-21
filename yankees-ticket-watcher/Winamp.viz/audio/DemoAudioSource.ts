@@ -1,4 +1,4 @@
-import type { AudioFrame, AudioSource, ExperienceMode } from "./types";
+import type { AudioFrame, AudioSource, AudioSourceDiagnostics, ExperienceMode } from "./types";
 
 export class DemoAudioSource implements AudioSource {
   private readonly spectrum = new Float32Array(128);
@@ -19,6 +19,7 @@ export class DemoAudioSource implements AudioSource {
   };
   private startTime = 0;
   private lastBeat = 0;
+  private framesRead = 0;
 
   constructor(
     private readonly sensitivityRef: () => number,
@@ -31,6 +32,7 @@ export class DemoAudioSource implements AudioSource {
   }
 
   getFrame(time = performance.now()) {
+    this.framesRead += 1;
     const t = (time - this.startTime) / 1000;
     const bpm = this.modeRef() === "chill" ? 96 : this.modeRef() === "karaoke" ? 82 : 126;
     const beatInterval = 60 / bpm;
@@ -89,5 +91,19 @@ export class DemoAudioSource implements AudioSource {
   stop() {
     this.spectrum.fill(0);
     this.waveform.fill(0);
+  }
+
+  getDiagnostics(): AudioSourceDiagnostics {
+    let maxFftBin = 0;
+    for (let i = 0; i < this.spectrum.length; i += 1) {
+      if (this.spectrum[i] > maxFftBin) maxFftBin = this.spectrum[i];
+    }
+    return {
+      audioState: "simulated",
+      framesRead: this.framesRead,
+      maxFftBin,
+      dataChanged: true,
+      rms: this.frame.volume
+    };
   }
 }

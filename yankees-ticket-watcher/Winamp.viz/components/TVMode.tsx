@@ -11,7 +11,7 @@ import { track } from "@/lib/analytics";
 import { createRoomCode, type RoomInfo } from "@/lib/roomCode";
 import { getTvRealtimeAdapter } from "@/lib/tvRealtime";
 import type { Visualizer } from "@/visualizers/Visualizer";
-import { visualizerFactories } from "@/visualizers";
+import { visualizerFactories, visualizerNames } from "@/visualizers";
 
 export default function TVMode() {
   const [room, setRoom] = useState<RoomInfo | null>(null);
@@ -127,7 +127,16 @@ export default function TVMode() {
     return (
       <main className="visualizer-stage">
         <canvas ref={canvasRef} />
-        <StatusOverlay elapsed={stats.elapsed} fps={stats.fps} frame={stats.frame} mode="party" presetIndex={presetIndex} source="tv" />
+        <StatusOverlay
+          elapsed={stats.elapsed}
+          fps={stats.fps}
+          frame={stats.frame}
+          mode="party"
+          presetCount={visualizerFactories.length}
+          presetIndex={presetIndex}
+          presetName={visualizerNames[presetIndex]}
+          source="tv"
+        />
         {lost && (
           <div className="fixed bottom-5 left-5 z-30 border border-red-400/70 bg-black/70 px-4 py-3 text-sm uppercase text-red-100">
             Realtime TV connection lost

@@ -1,5 +1,4 @@
-import type { AudioFrame, ExperienceMode } from "@/audio/types";
-import { visualizerNames } from "@/visualizers";
+import type { AudioFrame, AudioSourceDiagnostics, ExperienceMode } from "@/audio/types";
 
 function meter(value: number, width = 10) {
   const count = Math.max(0, Math.min(width, Math.round(value * width)));
@@ -12,7 +11,11 @@ export default function StatusOverlay({
   fps,
   elapsed,
   source,
-  mode
+  mode,
+  diagnostics,
+  debug,
+  presetName,
+  presetCount
 }: {
   frame: AudioFrame | null;
   presetIndex: number;
@@ -20,6 +23,10 @@ export default function StatusOverlay({
   elapsed: number;
   source: string;
   mode: ExperienceMode;
+  diagnostics?: AudioSourceDiagnostics | null;
+  debug?: boolean;
+  presetName: string;
+  presetCount: number;
 }) {
   const f = frame;
   return (
@@ -27,14 +34,14 @@ export default function StatusOverlay({
       <div className="flex justify-between gap-5 text-white">
         <span>VISUALIZE.FM</span>
         <span>
-          [{String(presetIndex + 1).padStart(2, "0")}/{visualizerNames.length}]
+          [{String(presetIndex + 1).padStart(2, "0")}/{presetCount}]
         </span>
       </div>
       <div className="mt-1 flex justify-between gap-5">
-        <span>{source === "demo" ? "DEMO INPUT" : source === "tv" ? "REMOTE INPUT" : "LIVE INPUT"}</span>
+        <span>{source === "demo" || source === "test" ? "TEST INPUT" : source === "tv" ? "REMOTE INPUT" : "LIVE INPUT"}</span>
         <span>44.1 KHZ</span>
       </div>
-      <div>{visualizerNames[presetIndex]}</div>
+      <div>{presetName}</div>
       <div>MODE {mode.toUpperCase()}</div>
       <div>VOL {meter(f?.volume ?? 0)}</div>
       <div>BASS {meter(f?.bass ?? 0)}</div>
@@ -43,6 +50,15 @@ export default function StatusOverlay({
       <div className="mt-1 text-cyan-200">
         FPS {Math.round(fps)} TIME {formatElapsed(elapsed)}
       </div>
+      {debug && (
+        <div className="mt-1 border-t border-[#39ff14]/30 pt-1 text-cyan-100">
+          <div>FRAMES {diagnostics?.framesRead ?? 0}</div>
+          <div>AUDIO {(diagnostics?.audioState ?? "idle").toUpperCase()}</div>
+          <div>RMS {(diagnostics?.rms ?? 0).toFixed(3)}</div>
+          <div>FFT MAX {(diagnostics?.maxFftBin ?? 0).toFixed(3)}</div>
+          <div>DATA {diagnostics?.dataChanged ? "CHANGING" : "STATIC"}</div>
+        </div>
+      )}
     </div>
   );
 }

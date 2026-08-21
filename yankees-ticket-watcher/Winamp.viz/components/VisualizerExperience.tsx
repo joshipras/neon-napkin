@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioEngine } from "@/audio/AudioEngine";
 import { DemoAudioSource } from "@/audio/DemoAudioSource";
-import type { AudioFrame, AudioSource, ExperienceMode } from "@/audio/types";
+import { SilentAudioSource } from "@/audio/SilentAudioSource";
+import type { AudioFrame, AudioSource, AudioSourceDiagnostics, ExperienceMode } from "@/audio/types";
 import ErrorState from "@/components/ErrorState";
 import StatusOverlay from "@/components/StatusOverlay";
 import VisualizerControls from "@/components/VisualizerControls";
@@ -11,9 +12,9 @@ import { track } from "@/lib/analytics";
 import type { Visualizer } from "@/visualizers/Visualizer";
 import { visualizerFactories, visualizerNames } from "@/visualizers";
 
-type SourceMode = "mic" | "demo";
+type SourceMode = "mic" | "demo" | "test";
 
-export default function VisualizerExperience({ source }: { source: SourceMode }) {
+export default function VisualizerExperience({ source, initialDebug = false }: { source: SourceMode; initialDebug?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioSourceRef = useRef<AudioSource | null>(null);
@@ -42,17 +43,23 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
   const [crt, setCrt] = useState(true);
   const [curved, setCurved] = useState(false);
   const [stats, setStats] = useState({ fps: 0, elapsed: 0, frame: null as AudioFrame | null });
+  const [diagnostics, setDiagnostics] = useState<AudioSourceDiagnostics | null>(null);
+  const [debugVisible, setDebugVisible] = useState(initialDebug);
   const [maximumNostalgia, setMaximumNostalgia] = useState(false);
 
-  const factories = useMemo(() => visualizerFactories, []);
+  const factories = useMemo(() => [visualizerFactories[0]], []);
+  const names = useMemo(() => [visualizerNames[0]], []);
 
   const resize = useCallback(() => {
     const canvas = canvasRef.current;
     const visualizer = visualizerRef.current;
     if (!canvas || !visualizer) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth > 2200 ? 1.5 : 2);
+    const rawDpr = Math.min(window.devicePixelRatio || 1, 1.25);
     const width = window.innerWidth;
     const height = window.innerHeight;
+    const maxPixels = 2_000_000;
+    const pixelCount = width * height * rawDpr * rawDpr;
+    const dpr = pixelCount > maxPixels ? Math.max(0.75, rawDpr * Math.sqrt(maxPixels / pixelCount)) : rawDpr;
     canvas.width = Math.floor(width * dpr);
     canvas.height = Math.floor(height * dpr);
     canvas.style.width = `${width}px`;
@@ -83,6 +90,10 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
   );
 
   const randomPreset = useCallback(() => {
+    if (factories.length <= 1) {
+      setPreset(0);
+      return;
+    }
     let next = presetIndexRef.current;
     while (next === presetIndexRef.current) next = Math.floor(Math.random() * factories.length);
     setPreset(next);
@@ -128,13 +139,16 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
     if (!canvas || !ctx) return;
 
     setPreset(0);
-    const fallbackSource = new DemoAudioSource(() => sensitivityRef.current * 0.82, () => modeRef.current);
+    const fallbackSource =
+      source === "mic"
+        ? new SilentAudioSource()
+        : new DemoAudioSource(() => sensitivityRef.current * 0.9, () => modeRef.current);
     fallbackSourceRef.current = fallbackSource;
     activeSourceRef.current = fallbackSource;
 
     void fallbackSource.start().then(() => {
       if (cancelled) return;
-      if (source === "demo") {
+      if (source !== "mic") {
         setStatus("ready");
         track("demo_started");
       }
@@ -146,7 +160,10 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
       void micSource
         .start()
         .then(() => {
-          if (cancelled) return;
+          if (cancelled) {
+            micSource.stop();
+            return;
+          }
           activeSourceRef.current = micSource;
           setStatus("ready");
           track("visualizer_started");
@@ -165,6 +182,7 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
     lastTimeRef.current = performance.now();
     presetChangedAtRef.current = lastTimeRef.current;
     let frames = 0;
+    let totalFrames = 0;
     let fpsTime = lastTimeRef.current;
     let fps = 0;
     const sessionStart = lastTimeRef.current;
@@ -185,11 +203,25 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
       maybeAutoCycle(frame, time);
 
       frames += 1;
-      if (time - fpsTime > 250) {
+      totalFrames += 1;
+      if (time - fpsTime > 500) {
         fps = frames / ((time - fpsTime) / 1000);
         frames = 0;
         fpsTime = time;
-        setStats({ fps, elapsed: (time - sessionStart) / 1000, frame });
+        const nextDiagnostics = audioSource.getDiagnostics?.() ?? null;
+        const elapsed = (time - sessionStart) / 1000;
+        window.__VISUALIZE_DIAGNOSTICS__ = {
+          fps,
+          elapsed,
+          renderFrames: totalFrames,
+          volume: frame.volume,
+          bass: frame.bass,
+          mid: frame.mid,
+          treble: frame.treble,
+          audio: nextDiagnostics
+        };
+        setStats({ fps, elapsed, frame });
+        setDiagnostics(nextDiagnostics);
       }
       rafRef.current = requestAnimationFrame(render);
     };
@@ -226,9 +258,10 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
   );
 
   const renderGlobalEffects = (frame: AudioFrame) => {
+    if (!maximumNostalgia) return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx || !maximumNostalgia) return;
+    if (!canvas || !ctx) return;
     const width = window.innerWidth;
     const height = window.innerHeight;
     ctx.globalCompositeOperation = "lighter";
@@ -266,6 +299,7 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
       if (key === "f") void enterFullscreen();
       if (key === "a") setAutoCycle(autoCycleRef.current === "off" ? "smart" : "off");
       if (key === "h") setControlsVisible((value) => !value);
+      if (key === "d") setDebugVisible((value) => !value);
 
       eggBufferRef.current = (eggBufferRef.current + key).slice(-12);
       if (eggBufferRef.current.includes("1999")) {
@@ -310,17 +344,30 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
       {status === "booting" && (
         <div className="pointer-events-none fixed left-1/2 top-6 z-30 w-[min(92vw,34rem)] -translate-x-1/2 border border-[#39ff14]/40 bg-black/70 px-4 py-3 text-center shadow-glow backdrop-blur-md">
           <div>
-            <p className="text-xs uppercase text-cyan-200">{source === "demo" ? "Starting demo signal" : "Waiting for microphone"}</p>
+            <p className="text-xs uppercase text-cyan-200">{source === "mic" ? "Waiting for microphone" : "Starting test signal"}</p>
             <h1 className="pixel-title mt-1 text-3xl font-black text-[#39ff14]">VISUALIZE.FM</h1>
             <p className="mt-2 text-xs leading-5 text-white/70">
-              {source === "demo"
+              {source !== "mic"
                 ? "Generating synthetic bass, beats, waveform, and spectrum."
                 : "Warm-up visuals are running. Allow mic access when the browser asks."}
             </p>
           </div>
         </div>
       )}
-      {overlay && <StatusOverlay elapsed={stats.elapsed} fps={stats.fps} frame={stats.frame} mode={mode} presetIndex={presetIndex} source={source} />}
+      {overlay && (
+        <StatusOverlay
+          debug={debugVisible}
+          diagnostics={diagnostics}
+          elapsed={stats.elapsed}
+          fps={stats.fps}
+          frame={stats.frame}
+          mode={mode}
+          presetCount={factories.length}
+          presetIndex={presetIndex}
+          presetName={names[presetIndex]}
+          source={source}
+        />
+      )}
       <VisualizerControls
         autoCycle={autoCycle}
         crt={crt}
@@ -338,7 +385,7 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
         onRandom={randomPreset}
         onSensitivity={setSensitivity}
         overlay={overlay}
-        presetName={visualizerNames[presetIndex]}
+        presetName={names[presetIndex]}
         sensitivity={sensitivity}
         visible={controlsVisible}
       />
@@ -355,4 +402,19 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
 
 interface FullscreenElement extends HTMLElement {
   webkitRequestFullscreen?: () => Promise<void>;
+}
+
+declare global {
+  interface Window {
+    __VISUALIZE_DIAGNOSTICS__?: {
+      fps: number;
+      elapsed: number;
+      renderFrames: number;
+      volume: number;
+      bass: number;
+      mid: number;
+      treble: number;
+      audio: AudioSourceDiagnostics | null;
+    };
+  }
 }
