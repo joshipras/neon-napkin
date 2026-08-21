@@ -6,16 +6,18 @@ import { DemoAudioSource } from "@/audio/DemoAudioSource";
 import { SilentAudioSource } from "@/audio/SilentAudioSource";
 import type { AudioFrame, AudioSource, AudioSourceDiagnostics, ExperienceMode } from "@/audio/types";
 import ErrorState from "@/components/ErrorState";
-import StatusOverlay from "@/components/StatusOverlay";
-import VisualizerControls from "@/components/VisualizerControls";
+import WinampPlayer from "@/components/winamp/WinampPlayer";
+import type { MiniSpectrumHandle } from "@/components/winamp/MiniSpectrum";
 import { track } from "@/lib/analytics";
 import type { Visualizer } from "@/visualizers/Visualizer";
-import { visualizerFactories, visualizerNames } from "@/visualizers";
+import { visualizerFactories } from "@/visualizers";
 
 type SourceMode = "mic" | "demo" | "test";
 
 export default function VisualizerExperience({ source, initialDebug = false }: { source: SourceMode; initialDebug?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const spectrumShellRef = useRef<HTMLElement | null>(null);
+  const miniSpectrumRef = useRef<MiniSpectrumHandle | null>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioSourceRef = useRef<AudioSource | null>(null);
   const fallbackSourceRef = useRef<AudioSource | null>(null);
@@ -33,30 +35,23 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
 
   const [status, setStatus] = useState<"booting" | "ready" | "error">("booting");
   const [error, setError] = useState("");
-  const [presetIndex, setPresetIndex] = useState(0);
-  const [controlsVisible, setControlsVisible] = useState(true);
   const [hideCursor, setHideCursor] = useState(false);
-  const [sensitivity, setSensitivityState] = useState(1);
-  const [mode, setModeState] = useState<ExperienceMode>("party");
-  const [autoCycle, setAutoCycleState] = useState("off");
-  const [overlay, setOverlay] = useState(true);
-  const [crt, setCrt] = useState(true);
-  const [curved, setCurved] = useState(false);
   const [stats, setStats] = useState({ fps: 0, elapsed: 0, frame: null as AudioFrame | null });
   const [diagnostics, setDiagnostics] = useState<AudioSourceDiagnostics | null>(null);
   const [debugVisible, setDebugVisible] = useState(initialDebug);
   const [maximumNostalgia, setMaximumNostalgia] = useState(false);
 
   const factories = useMemo(() => [visualizerFactories[0]], []);
-  const names = useMemo(() => [visualizerNames[0]], []);
 
   const resize = useCallback(() => {
     const canvas = canvasRef.current;
     const visualizer = visualizerRef.current;
     if (!canvas || !visualizer) return;
+    const shell = spectrumShellRef.current;
+    const rect = shell?.getBoundingClientRect();
+    const width = Math.max(320, Math.floor(rect?.width || window.innerWidth));
+    const height = Math.max(160, Math.floor(rect?.height || window.innerHeight * 0.4));
     const rawDpr = Math.min(window.devicePixelRatio || 1, 1.25);
-    const width = window.innerWidth;
-    const height = window.innerHeight;
     const maxPixels = 2_000_000;
     const pixelCount = width * height * rawDpr * rawDpr;
     const dpr = pixelCount > maxPixels ? Math.max(0.75, rawDpr * Math.sqrt(maxPixels / pixelCount)) : rawDpr;
@@ -68,6 +63,7 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     visualizer.resize(width, height, dpr);
+    miniSpectrumRef.current?.resize();
   }, []);
 
   const setPreset = useCallback(
@@ -81,7 +77,6 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
       visualizer.init(canvas, ctx);
       visualizerRef.current = visualizer;
       presetIndexRef.current = index;
-      setPresetIndex(index);
       presetChangedAtRef.current = performance.now();
       resize();
       track("preset_changed", { preset: visualizer.name, index });
@@ -99,20 +94,13 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
     setPreset(next);
   }, [factories.length, setPreset]);
 
-  const setSensitivity = (value: number) => {
-    sensitivityRef.current = value;
-    setSensitivityState(value);
-  };
-
   const setMode = (value: ExperienceMode) => {
     modeRef.current = value;
-    setModeState(value);
     if (value === "chaos") setPreset(factories.length - 1);
   };
 
   const setAutoCycle = (value: string) => {
     autoCycleRef.current = value;
-    setAutoCycleState(value);
   };
 
   const enterFullscreen = async () => {
@@ -125,11 +113,6 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
     } catch {
       // Fullscreen can fail on iOS Safari without breaking the visualizer.
     }
-  };
-
-  const exitExperience = () => {
-    audioSourceRef.current?.stop();
-    window.location.href = "/";
   };
 
   useEffect(() => {
@@ -199,6 +182,7 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
       const frame = audioSource.getFrame(time);
       frameRef.current = frame;
       visualizerRef.current?.render(frame, dt);
+      miniSpectrumRef.current?.render(frame);
       renderGlobalEffects(frame);
       maybeAutoCycle(frame, time);
 
@@ -279,26 +263,23 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
   useEffect(() => {
     let hideTimer = 0;
     const reveal = () => {
-      setControlsVisible(true);
       setHideCursor(false);
       window.clearTimeout(hideTimer);
       hideTimer = window.setTimeout(() => {
-        setControlsVisible(false);
         setHideCursor(true);
       }, 3600);
     };
     const onKey = (event: KeyboardEvent) => {
       reveal();
       const key = event.key.toLowerCase();
-      if (key === "arrowleft") setPreset(presetIndex - 1);
-      if (key === "arrowright") setPreset(presetIndex + 1);
+      if (key === "arrowleft") setPreset(presetIndexRef.current - 1);
+      if (key === "arrowright") setPreset(presetIndexRef.current + 1);
       if (key === " ") {
         event.preventDefault();
         randomPreset();
       }
       if (key === "f") void enterFullscreen();
       if (key === "a") setAutoCycle(autoCycleRef.current === "off" ? "smart" : "off");
-      if (key === "h") setControlsVisible((value) => !value);
       if (key === "d") setDebugVisible((value) => !value);
 
       eggBufferRef.current = (eggBufferRef.current + key).slice(-12);
@@ -331,18 +312,20 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
       window.removeEventListener("keydown", onKey);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [presetIndex, randomPreset, setPreset]);
+  }, [randomPreset, setPreset]);
 
   if (status === "error") return <ErrorState code={error} />;
 
   return (
     <main
-      className={`visualizer-stage ${hideCursor ? "hide-cursor" : ""}`}
+      className={`visualizer-stage winamp-stage ${hideCursor ? "hide-cursor" : ""}`}
       aria-label="Visualize.fm music visualizer"
     >
-      <canvas ref={canvasRef} />
+      <section ref={spectrumShellRef} className="wa-spectrum-shell">
+        <canvas ref={canvasRef} className="wa-main-canvas" />
+      </section>
       {status === "booting" && (
-        <div className="pointer-events-none fixed left-1/2 top-6 z-30 w-[min(92vw,34rem)] -translate-x-1/2 border border-[#39ff14]/40 bg-black/70 px-4 py-3 text-center shadow-glow backdrop-blur-md">
+        <div className="wa-mic-badge pointer-events-none">
           <div>
             <p className="text-xs uppercase text-cyan-200">{source === "mic" ? "Waiting for microphone" : "Starting test signal"}</p>
             <h1 className="pixel-title mt-1 text-3xl font-black text-[#39ff14]">VISUALIZE.FM</h1>
@@ -354,43 +337,16 @@ export default function VisualizerExperience({ source, initialDebug = false }: {
           </div>
         </div>
       )}
-      {overlay && (
-        <StatusOverlay
-          debug={debugVisible}
-          diagnostics={diagnostics}
-          elapsed={stats.elapsed}
-          fps={stats.fps}
-          frame={stats.frame}
-          mode={mode}
-          presetCount={factories.length}
-          presetIndex={presetIndex}
-          presetName={names[presetIndex]}
-          source={source}
-        />
-      )}
-      <VisualizerControls
-        autoCycle={autoCycle}
-        crt={crt}
-        curved={curved}
-        mode={mode}
-        onAutoCycle={setAutoCycle}
-        onCrt={() => setCrt((value) => !value)}
-        onCurved={() => setCurved((value) => !value)}
-        onExit={exitExperience}
+      <WinampPlayer
+        ref={miniSpectrumRef}
+        debug={debugVisible}
+        diagnostics={diagnostics}
+        elapsed={stats.elapsed}
+        fps={stats.fps}
+        frame={stats.frame}
         onFullscreen={() => void enterFullscreen()}
-        onMode={setMode}
-        onNext={() => setPreset(presetIndex + 1)}
-        onOverlay={() => setOverlay((value) => !value)}
-        onPrev={() => setPreset(presetIndex - 1)}
-        onRandom={randomPreset}
-        onSensitivity={setSensitivity}
-        overlay={overlay}
-        presetName={names[presetIndex]}
-        sensitivity={sensitivity}
-        visible={controlsVisible}
+        source={source}
       />
-      {crt && <div className="pointer-events-none fixed inset-0 z-20 bg-[linear-gradient(rgba(255,255,255,0.045)_50%,rgba(0,0,0,0.16)_50%)] bg-[length:100%_4px] mix-blend-screen" />}
-      {curved && <div className="pointer-events-none fixed inset-0 z-20 rounded-[8vw] shadow-[inset_0_0_90px_rgba(0,0,0,0.92)]" />}
       {maximumNostalgia && (
         <div className="panel-text pointer-events-none fixed right-4 top-4 z-30 border border-fuchsia-400/60 bg-black/60 px-3 py-2 text-xs font-black uppercase text-fuchsia-200">
           MAXIMUM NOSTALGIA

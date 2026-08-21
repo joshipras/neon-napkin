@@ -1,20 +1,23 @@
 import { CanvasVisualizer } from "./Visualizer";
 import type { AudioFrame } from "@/audio/types";
 
-const BAR_COUNT = 24;
-const SEGMENTS = 14;
+const MAX_BARS = 72;
 const PEAK_HOLD_SECONDS = 0.22;
-const BAND_GAMMA = 1.72;
+const BAND_GAMMA = 1.58;
 
 export class SpectrumVisualizer extends CanvasVisualizer {
   readonly name = "Spectrum Classic";
-  private readonly bars = new Float32Array(BAR_COUNT);
-  private readonly peaks = new Float32Array(BAR_COUNT);
-  private readonly peakHold = new Float32Array(BAR_COUNT);
+  private readonly bars = new Float32Array(MAX_BARS);
+  private readonly peaks = new Float32Array(MAX_BARS);
+  private readonly peakHold = new Float32Array(MAX_BARS);
+  private activeBars = 56;
+  private activeSegments = 28;
   private background: HTMLCanvasElement | null = null;
 
   resize(width: number, height: number, dpr: number) {
     super.resize(width, height, dpr);
+    this.activeBars = Math.max(45, Math.min(70, Math.round(width / 29)));
+    this.activeSegments = Math.max(22, Math.min(34, Math.round(height / 14)));
     this.background = this.createBackground(width, height);
   }
 
@@ -24,15 +27,15 @@ export class SpectrumVisualizer extends CanvasVisualizer {
     const ctx = this.ctx;
     const width = this.width;
     const height = this.height;
-    const floor = height - Math.max(48, height * 0.07);
-    const top = Math.max(72, height * 0.16);
+    const floor = height - Math.max(18, height * 0.045);
+    const top = Math.max(10, height * 0.035);
     const spectrumHeight = floor - top;
-    const sidePad = Math.max(18, width * 0.045);
+    const sidePad = Math.max(16, width * 0.025);
     const usable = width - sidePad * 2;
-    const gap = Math.max(5, Math.floor((usable / BAR_COUNT) * 0.22));
-    const barWidth = Math.max(10, Math.floor((usable - gap * (BAR_COUNT - 1)) / BAR_COUNT));
-    const segmentGap = Math.max(2, Math.floor(spectrumHeight / 190));
-    const segmentHeight = Math.max(7, Math.floor((spectrumHeight - segmentGap * (SEGMENTS - 1)) / SEGMENTS));
+    const gap = Math.max(3, Math.min(6, Math.floor((usable / this.activeBars) * 0.18)));
+    const barWidth = Math.max(8, Math.floor((usable - gap * (this.activeBars - 1)) / this.activeBars));
+    const segmentGap = Math.max(1, Math.min(3, Math.floor(spectrumHeight / 170)));
+    const segmentHeight = Math.max(3, Math.floor((spectrumHeight - segmentGap * (this.activeSegments - 1)) / this.activeSegments));
 
     if (this.background) ctx.drawImage(this.background, 0, 0, width, height);
     else this.clear("#020304");
@@ -41,13 +44,13 @@ export class SpectrumVisualizer extends CanvasVisualizer {
     ctx.globalCompositeOperation = "source-over";
     ctx.shadowBlur = 0;
 
-    for (let i = 0; i < BAR_COUNT; i += 1) {
+    for (let i = 0; i < this.activeBars; i += 1) {
       const x = Math.round(sidePad + i * (barWidth + gap));
-      const litSegments = Math.round(this.bars[i] * SEGMENTS);
+      const litSegments = Math.round(this.bars[i] * this.activeSegments);
 
-      for (let s = 0; s < SEGMENTS; s += 1) {
+      for (let s = 0; s < this.activeSegments; s += 1) {
         const y = Math.round(floor - (s + 1) * segmentHeight - s * segmentGap);
-        ctx.fillStyle = s < litSegments ? this.segmentColor(s) : "rgba(12, 22, 16, 0.82)";
+        ctx.fillStyle = s < litSegments ? this.segmentColor(s) : "rgba(1, 6, 3, 0.72)";
         ctx.fillRect(x, y, barWidth, segmentHeight);
         if (s < litSegments) {
           ctx.fillStyle = "rgba(255,255,255,0.1)";
@@ -66,7 +69,7 @@ export class SpectrumVisualizer extends CanvasVisualizer {
   }
 
   private updateBars(frame: AudioFrame, deltaTime: number) {
-    for (let i = 0; i < BAR_COUNT; i += 1) {
+    for (let i = 0; i < this.activeBars; i += 1) {
       const target = this.bandValue(frame, i);
       const rise = 1 - Math.pow(0.0008, deltaTime);
       const fall = 1 - Math.pow(0.045, deltaTime);
@@ -79,14 +82,14 @@ export class SpectrumVisualizer extends CanvasVisualizer {
       } else if (this.peakHold[i] > 0) {
         this.peakHold[i] = Math.max(0, this.peakHold[i] - deltaTime);
       } else {
-        this.peaks[i] = Math.max(0, this.peaks[i] - deltaTime * (0.16 + (i / BAR_COUNT) * 0.045));
+        this.peaks[i] = Math.max(0, this.peaks[i] - deltaTime * (0.13 + (i / this.activeBars) * 0.035));
       }
     }
   }
 
   private bandValue(frame: AudioFrame, barIndex: number) {
-    const startNorm = Math.pow(barIndex / BAR_COUNT, BAND_GAMMA);
-    const endNorm = Math.pow((barIndex + 1) / BAR_COUNT, BAND_GAMMA);
+    const startNorm = Math.pow(barIndex / this.activeBars, BAND_GAMMA);
+    const endNorm = Math.pow((barIndex + 1) / this.activeBars, BAND_GAMMA);
     const start = Math.max(0, Math.floor(startNorm * frame.spectrum.length));
     const end = Math.min(frame.spectrum.length, Math.max(start + 1, Math.ceil(endNorm * frame.spectrum.length)));
     let sum = 0;
@@ -100,17 +103,19 @@ export class SpectrumVisualizer extends CanvasVisualizer {
 
     const average = sum / (end - start);
     const bandEnergy = average * 0.72 + max * 0.28;
-    const lowBoost = barIndex < 5 ? frame.bass * (0.22 - barIndex * 0.025) : 0;
-    const vocalBoost = barIndex >= 7 && barIndex <= 15 ? frame.mid * 0.08 : 0;
-    const highSnap = barIndex > 16 ? frame.treble * 0.06 : 0;
+    const lowBoost = barIndex < this.activeBars * 0.2 ? frame.bass * 0.12 : 0;
+    const vocalBoost = barIndex >= this.activeBars * 0.28 && barIndex <= this.activeBars * 0.66 ? frame.mid * 0.08 : 0;
+    const highSnap = barIndex > this.activeBars * 0.68 ? frame.treble * 0.055 : 0;
     return Math.max(0, Math.min(1, Math.pow(bandEnergy + lowBoost + vocalBoost + highSnap, 0.82)));
   }
 
   private segmentColor(segment: number) {
-    if (segment >= 11) return "#ff7a00";
-    if (segment >= 8) return "#ffd000";
-    if (segment >= 5) return "#b8ff18";
-    return "#38e214";
+    const pct = segment / Math.max(1, this.activeSegments - 1);
+    if (pct >= 0.92) return "#ff3d00";
+    if (pct >= 0.8) return "#ff7a00";
+    if (pct >= 0.66) return "#ffe600";
+    if (pct >= 0.46) return "#b8ff00";
+    return "#26ef12";
   }
 
   private createBackground(width: number, height: number) {
@@ -120,28 +125,11 @@ export class SpectrumVisualizer extends CanvasVisualizer {
     const ctx = background.getContext("2d");
     if (!ctx) return null;
 
-    const floor = height - Math.max(48, height * 0.07);
-    ctx.fillStyle = "#020304";
+    const floor = height - Math.max(18, height * 0.045);
+    ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, width, height);
-    ctx.strokeStyle = "rgba(21, 37, 47, 0.62)";
-    ctx.lineWidth = 1;
-
-    for (let x = 0; x < width; x += 34) {
-      ctx.beginPath();
-      ctx.moveTo(x + 0.5, 0);
-      ctx.lineTo(x + 0.5, height);
-      ctx.stroke();
-    }
-
-    for (let y = 0; y < height; y += 34) {
-      ctx.beginPath();
-      ctx.moveTo(0, y + 0.5);
-      ctx.lineTo(width, y + 0.5);
-      ctx.stroke();
-    }
-
-    ctx.fillStyle = "rgba(0, 0, 0, 0.36)";
-    ctx.fillRect(0, 0, width, Math.max(0, floor - height * 0.76));
+    ctx.fillStyle = "rgba(255,255,255,0.009)";
+    for (let y = 2; y < floor; y += 6) ctx.fillRect(0, y, width, 1);
     return background;
   }
 
