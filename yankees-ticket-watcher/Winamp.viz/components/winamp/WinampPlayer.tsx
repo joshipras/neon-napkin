@@ -61,7 +61,7 @@ const WinampPlayer = forwardRef<MiniSpectrumHandle, WinampPlayerProps>(function 
         <div className="wa-right-deck">
           <div className="wa-track-row">
             <div className="wa-track-display">
-              <span>001. LIVE KARAOKE - MICROPHONE INPUT - VISUALIZE.FM</span>
+              <span>001. LIVE KARAOKE - FOLLOW @PRASITIVITY FOR MORE!</span>
             </div>
             <div className="wa-meta-box wa-kbps">
               <strong>128</strong>
@@ -97,7 +97,7 @@ const WinampPlayer = forwardRef<MiniSpectrumHandle, WinampPlayerProps>(function 
                   <i className={index / 34 < 0.18 + volume * 0.7 ? "on" : ""} key={index} />
                 ))}
               </div>
-              <span className="wa-decor-label">LIVE INPUT · MIC · FFT</span>
+              <span className="wa-decor-label">ALL RIGHTS RESERVED PRASANNA JOSHI 2026</span>
             </div>
             <div className="wa-toggle-cluster">
               <WinampButton className="wa-wide">
