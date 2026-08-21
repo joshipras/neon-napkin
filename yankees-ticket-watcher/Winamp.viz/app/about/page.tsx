@@ -31,6 +31,9 @@ export default function AboutPage() {
             only lightweight numerical features to the display. It never sends
             raw microphone audio.
           </p>
+          <p className="text-sm uppercase leading-6 text-white/50">
+            Unofficial nostalgia project. Not affiliated with or endorsed by Winamp.
+          </p>
         </div>
         <Link
           className="bevel mt-10 inline-flex px-5 py-3 text-sm font-black uppercase text-[#39ff14]"

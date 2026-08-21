@@ -1,24 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { getSiteUrl, siteDescription, siteTitle } from "@/lib/siteUrl";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://visualize.fm";
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Visualize.fm - Turn Any Room Into 1999",
+    default: siteTitle,
     template: "%s | Visualize.fm"
   },
-  description:
-    "Free retro music visualizer for karaoke, parties and living rooms. Turn on your microphone, go fullscreen and watch your music come alive.",
+  description: siteDescription,
   applicationName: "Visualize.fm",
   alternates: {
     canonical: "/"
   },
   openGraph: {
-    title: "Visualize.fm - Turn Any Room Into 1999",
-    description:
-      "Free retro music visualizer for karaoke, parties and living rooms. Turn on your microphone, go fullscreen and watch your music come alive.",
+    title: siteTitle,
+    description: siteDescription,
     url: "/",
     siteName: "Visualize.fm",
     images: [
@@ -33,9 +32,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Visualize.fm - Turn Any Room Into 1999",
-    description:
-      "Free retro music visualizer for karaoke, parties and living rooms. Turn on your microphone, go fullscreen and watch your music come alive.",
+    title: siteTitle,
+    description: siteDescription,
     images: ["/opengraph-image"]
   },
   icons: {

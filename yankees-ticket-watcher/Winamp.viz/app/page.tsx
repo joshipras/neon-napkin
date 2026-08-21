@@ -52,6 +52,9 @@ export default function Home() {
           No audio is recorded or uploaded. Your microphone audio stays on your
           device. Nothing is recorded.
         </p>
+        <p className="mt-4 max-w-2xl text-[11px] uppercase leading-5 text-white/42">
+          Unofficial nostalgia project. Not affiliated with or endorsed by Winamp.
+        </p>
       </section>
     </main>
   );
