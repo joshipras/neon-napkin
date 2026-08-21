@@ -8,13 +8,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { AudioFrame } from "@/audio/types";
 import StatusOverlay from "@/components/StatusOverlay";
 import { track } from "@/lib/analytics";
-import { createRoomCode } from "@/lib/roomCode";
+import { createRoomCode, type RoomInfo } from "@/lib/roomCode";
 import { getTvRealtimeAdapter } from "@/lib/tvRealtime";
 import type { Visualizer } from "@/visualizers/Visualizer";
 import { visualizerFactories } from "@/visualizers";
 
 export default function TVMode() {
-  const [room] = useState(() => createRoomCode());
+  const [room, setRoom] = useState<RoomInfo | null>(null);
   const [qr, setQr] = useState("");
   const [paired, setPaired] = useState(false);
   const [lost, setLost] = useState(false);
@@ -25,13 +25,15 @@ export default function TVMode() {
   const visualizerRef = useRef<Visualizer | null>(null);
   const rafRef = useRef(0);
   const adapter = useMemo(() => getTvRealtimeAdapter(), []);
-  const joinUrl =
-    typeof window === "undefined"
-      ? `/join/${room.code}`
-      : `${window.location.origin}/join/${room.code}`;
+  const joinUrl = room && typeof window !== "undefined" ? `${window.location.origin}/join/${room.code}` : "";
 
   useEffect(() => {
+    setRoom(createRoomCode());
     track("tv_mode_started");
+  }, []);
+
+  useEffect(() => {
+    if (!joinUrl) return;
     void QRCode.toDataURL(joinUrl, {
       margin: 1,
       color: {
@@ -43,7 +45,7 @@ export default function TVMode() {
   }, [joinUrl]);
 
   useEffect(() => {
-    if (!adapter.enabled) return;
+    if (!adapter.enabled || !room) return;
     let cleanup = () => {};
     void adapter.subscribe(
       room.code,
@@ -57,7 +59,7 @@ export default function TVMode() {
       cleanup = dispose;
     });
     return () => cleanup();
-  }, [adapter, room.code]);
+  }, [adapter, room]);
 
   useEffect(() => {
     if (!paired) return;
@@ -141,10 +143,10 @@ export default function TVMode() {
         <p className="text-xs uppercase text-cyan-200">TV MODE</p>
         <h1 className="pixel-title mt-4 text-6xl font-black text-[#39ff14]">SCAN WITH YOUR PHONE</h1>
         <div className="mt-8 flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
-          <div className="bevel bg-[#39ff14] p-3">{qr ? <img alt={`Join room ${room.code}`} className="h-64 w-64" src={qr} /> : null}</div>
+          <div className="bevel bg-[#39ff14] p-3">{qr ? <img alt={`Join room ${room?.code ?? ""}`} className="h-64 w-64" src={qr} /> : null}</div>
           <div className="text-left">
             <div className="text-xs uppercase text-white/50">Room Code</div>
-            <div className="font-mono text-7xl font-black text-white">{room.code}</div>
+            <div className="font-mono text-7xl font-black text-white">{room?.code ?? "----"}</div>
             <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
               Phone audio is analyzed locally. Only numerical visualization data is transmitted, not raw audio.
             </p>
