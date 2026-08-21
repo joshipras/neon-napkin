@@ -17,6 +17,8 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioSourceRef = useRef<AudioSource | null>(null);
+  const fallbackSourceRef = useRef<AudioSource | null>(null);
+  const activeSourceRef = useRef<AudioSource | null>(null);
   const rafRef = useRef(0);
   const lastTimeRef = useRef(0);
   const presetChangedAtRef = useRef(0);
@@ -126,57 +128,80 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
     if (!canvas || !ctx) return;
 
     setPreset(0);
-    const audioSource =
-      source === "demo"
-        ? new DemoAudioSource(() => sensitivityRef.current, () => modeRef.current)
-        : new AudioEngine(() => sensitivityRef.current, () => modeRef.current);
-    audioSourceRef.current = audioSource;
+    const fallbackSource = new DemoAudioSource(() => sensitivityRef.current * 0.82, () => modeRef.current);
+    fallbackSourceRef.current = fallbackSource;
+    activeSourceRef.current = fallbackSource;
 
-    audioSource
-      .start()
-      .then(() => {
-        if (cancelled) return;
+    void fallbackSource.start().then(() => {
+      if (cancelled) return;
+      if (source === "demo") {
         setStatus("ready");
-        track(source === "demo" ? "demo_started" : "visualizer_started");
-        resize();
-        lastTimeRef.current = performance.now();
-        presetChangedAtRef.current = lastTimeRef.current;
-        let frames = 0;
-        let fpsTime = lastTimeRef.current;
-        let fps = 0;
-        const sessionStart = lastTimeRef.current;
+        track("demo_started");
+      }
+    });
 
-        const render = (time: number) => {
-          const dt = Math.min(0.05, Math.max(0.001, (time - lastTimeRef.current) / 1000));
-          lastTimeRef.current = time;
-          const frame = audioSource.getFrame(time);
-          frameRef.current = frame;
-          visualizerRef.current?.render(frame, dt);
-          renderGlobalEffects(frame);
-          maybeAutoCycle(frame, time);
+    if (source === "mic") {
+      const micSource = new AudioEngine(() => sensitivityRef.current, () => modeRef.current);
+      audioSourceRef.current = micSource;
+      void micSource
+        .start()
+        .then(() => {
+          if (cancelled) return;
+          activeSourceRef.current = micSource;
+          setStatus("ready");
+          track("visualizer_started");
+        })
+        .catch((err: Error) => {
+          if (cancelled) return;
+          fallbackSource.stop();
+          setError(err.message);
+          setStatus("error");
+        });
+    } else {
+      audioSourceRef.current = fallbackSource;
+    }
 
-          frames += 1;
-          if (time - fpsTime > 250) {
-            fps = frames / ((time - fpsTime) / 1000);
-            frames = 0;
-            fpsTime = time;
-            setStats({ fps, elapsed: (time - sessionStart) / 1000, frame });
-          }
-          rafRef.current = requestAnimationFrame(render);
-        };
+    resize();
+    lastTimeRef.current = performance.now();
+    presetChangedAtRef.current = lastTimeRef.current;
+    let frames = 0;
+    let fpsTime = lastTimeRef.current;
+    let fps = 0;
+    const sessionStart = lastTimeRef.current;
+
+    const render = (time: number) => {
+      const dt = Math.min(0.05, Math.max(0.001, (time - lastTimeRef.current) / 1000));
+      lastTimeRef.current = time;
+      const audioSource = activeSourceRef.current;
+      if (!audioSource) {
         rafRef.current = requestAnimationFrame(render);
-      })
-      .catch((err: Error) => {
-        if (cancelled) return;
-        setError(err.message);
-        setStatus("error");
-      });
+        return;
+      }
+
+      const frame = audioSource.getFrame(time);
+      frameRef.current = frame;
+      visualizerRef.current?.render(frame, dt);
+      renderGlobalEffects(frame);
+      maybeAutoCycle(frame, time);
+
+      frames += 1;
+      if (time - fpsTime > 250) {
+        fps = frames / ((time - fpsTime) / 1000);
+        frames = 0;
+        fpsTime = time;
+        setStats({ fps, elapsed: (time - sessionStart) / 1000, frame });
+      }
+      rafRef.current = requestAnimationFrame(render);
+    };
+    rafRef.current = requestAnimationFrame(render);
 
     window.addEventListener("resize", resize);
     return () => {
       cancelled = true;
       cancelAnimationFrame(rafRef.current);
       audioSourceRef.current?.stop();
+      fallbackSourceRef.current?.stop();
+      activeSourceRef.current = null;
       visualizerRef.current?.destroy();
       window.removeEventListener("resize", resize);
     };
@@ -283,14 +308,14 @@ export default function VisualizerExperience({ source }: { source: SourceMode })
     >
       <canvas ref={canvasRef} />
       {status === "booting" && (
-        <div className="pointer-events-none fixed inset-0 z-20 flex items-center justify-center bg-black text-center">
+        <div className="pointer-events-none fixed left-1/2 top-6 z-30 w-[min(92vw,34rem)] -translate-x-1/2 border border-[#39ff14]/40 bg-black/70 px-4 py-3 text-center shadow-glow backdrop-blur-md">
           <div>
             <p className="text-xs uppercase text-cyan-200">{source === "demo" ? "Starting demo signal" : "Waiting for microphone"}</p>
-            <h1 className="pixel-title mt-4 text-5xl font-black text-[#39ff14]">VISUALIZE.FM</h1>
-            <p className="mt-5 max-w-md px-5 text-sm text-white/70">
+            <h1 className="pixel-title mt-1 text-3xl font-black text-[#39ff14]">VISUALIZE.FM</h1>
+            <p className="mt-2 text-xs leading-5 text-white/70">
               {source === "demo"
                 ? "Generating synthetic bass, beats, waveform, and spectrum."
-                : "Your microphone audio stays on your device. Nothing is recorded."}
+                : "Warm-up visuals are running. Allow mic access when the browser asks."}
             </p>
           </div>
         </div>
