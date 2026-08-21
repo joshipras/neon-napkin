@@ -1,14 +1,62 @@
 # Visualize.fm
 
-Visualize.fm is a fullscreen retro music visualizer for parties, karaoke, bars, living rooms, TVs, and projectors. The core V1 is intentionally simple:
+Visualize.fm is a browser-based retro audio visualizer built for the specific feeling of a late-90s desktop music player blown up onto a TV. Open it, allow the microphone, play music in the room, and the screen turns into a dense Winamp-era spectrum analyzer with segmented green/yellow/orange bars, falling peak markers, metallic controls, tiny LED displays, and an unapologetically mechanical interface.
+
+Live app: https://visualize-fm-winamp.vercel.app
+
+Unofficial nostalgia project. Not affiliated with or endorsed by Winamp.
+
+## Why It Exists
+
+The goal is not a modern equalizer with a retro color palette. The goal is instant recognition: black analyzer field, bright LED bars, gray floating peaks, seven-segment timer, tiny `128 kbps` / `44 kHz` readouts, mono/stereo lamps, beveled silver transport buttons, and the kind of dense UI that made old media players feel like hardware.
+
+It is meant for:
+
+- karaoke nights
+- house parties
+- bars
+- living rooms
+- HDMI-connected TVs and projectors
+- anyone who misses visualizers that felt a little excessive in the best way
+
+## Screenshot
+
+A screenshot can be added here once the deployed app is captured at desktop/TV aspect ratio:
+
+```md
+![Visualize.fm Winamp-style spectrum analyzer](docs/screenshot.png)
+```
+
+Until then, the generated Open Graph preview and live app show the intended black-background, segmented-spectrum, late-90s player aesthetic.
+
+## Core Experience
 
 1. Visit the site.
 2. Click `START VISUALIZER`.
 3. Allow microphone access.
-4. Go fullscreen.
-5. Enjoy reactive 1999-style visual chaos.
+4. Play music, sing, clap, or talk near the mic.
+5. Go fullscreen for TV/projector use.
 
-The app does not require an account.
+The app does not require an account, database, or paid service for the normal microphone visualizer.
+
+## Audio Privacy
+
+Microphone audio stays on the device. The local microphone flow connects:
+
+```text
+Microphone MediaStream -> high-pass filter -> AnalyserNode
+```
+
+The microphone signal is not connected to speakers, recorded, uploaded, or sent to analytics. The app reads numerical audio features from the Web Audio API so the canvas can draw reactive bars.
+
+The current audio engine includes:
+
+- disabled automatic gain control where supported
+- echo cancellation and noise suppression requests where supported
+- high-pass filtering to reduce HVAC/room rumble
+- adaptive per-band noise-floor subtraction
+- soft gating so quiet rooms settle near idle
+- fast attack and musical decay for singing/music
 
 ## Local Development
 
@@ -19,95 +67,48 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-Microphone access works on `localhost`. In production it requires HTTPS.
+Microphone access works on `localhost`. Public deployments need HTTPS, which Vercel provides automatically.
 
 ## Production Checks
 
 ```bash
-npm lint
+npm run lint
 npm test
 npm run build
 ```
 
-## Deployment
-
-This project is ready for Vercel:
+Run the production server locally:
 
 ```bash
-npm install
-npm run build
-npx vercel --prod
+npm start
 ```
 
-Set `NEXT_PUBLIC_SITE_URL` to the production origin, for example `https://your-domain.com`.
-
-## Environment Variables
+If port `3000` is busy:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_ENABLE_ANALYTICS=0
+PORT=3040 npm start
+```
 
+## Deployment
+
+The project is deployed on Vercel:
+
+```bash
+npx --yes vercel@latest deploy --prod
+```
+
+Core microphone visualization requires no environment variables.
+
+Optional:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://visualize-fm-winamp.vercel.app
+NEXT_PUBLIC_ENABLE_ANALYTICS=0
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-`NEXT_PUBLIC_ENABLE_ANALYTICS=1` enables optional anonymous product events through `window.va` when Vercel Analytics is present. It never sends microphone-derived audio features.
-
-## Audio Privacy
-
-Local microphone mode uses `navigator.mediaDevices.getUserMedia({ audio: true })`, connects the microphone stream to a Web Audio `AnalyserNode`, and never connects that stream to speakers. No raw microphone audio is recorded, uploaded, stored, or sent to analytics.
-
-TV Mode is designed so the phone performs audio analysis locally and transmits only lightweight numbers:
-
-- volume
-- bass
-- lowMid
-- mid
-- highMid
-- treble
-- beat
-- strongBeat
-- beatIntensity
-- compressed spectrum bins
-
-The phone does not transmit raw audio or waveform samples.
-
-## TV Mode Setup
-
-The app ships with a Supabase Realtime Broadcast adapter. Local mic and demo mode work without Supabase.
-
-To enable phone-as-microphone TV Mode:
-
-1. Create a Supabase project.
-2. Copy the project URL and anon key.
-3. Add these variables in Vercel:
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-4. Redeploy.
-5. Open `/tv` on the TV or laptop.
-6. Scan the QR code from the phone.
-7. Tap `START PHONE MIC`.
-
-The implementation uses Supabase Realtime Broadcast channels named by room code. Room codes are generated client-side and are meant for short-lived sessions. For a higher-security production pairing flow, add a tiny server route that signs room tokens and rejects expired codes before subscribing.
-
-## Visualizers
-
-- Spectrum Classic
-- Neon Oscilloscope
-- Starfield
-- Plasma
-- Infinite Tunnel
-- Retro Rings
-- Laser Grid
-- Particle Explosion
-- Kaleidoscope
-- Frequency Mountains
-- Matrix Audio
-- Chaos Mode
+`NEXT_PUBLIC_SITE_URL` is only needed when overriding the detected production URL or attaching a custom domain.
 
 ## Architecture
 
@@ -124,39 +125,30 @@ audio/
   DemoAudioSource.ts
 components/
   VisualizerExperience.tsx
-  VisualizerControls.tsx
-  StatusOverlay.tsx
+  WinampPlayer.tsx
+  MainSpectrum.tsx
+  MiniSpectrum.tsx
 lib/
-  tvRealtime.ts
   roomCode.ts
+  siteUrl.ts
+  tvRealtime.ts
 visualizers/
-  Visualizer.ts
-  SpectrumVisualizer.ts
-  ...
 tests/
 ```
 
-React controls session state, route state, and UI. Canvas animation runs through `requestAnimationFrame` and refs so React is not re-rendering every frame.
+React manages route/session/UI state. Canvas drawing runs through `requestAnimationFrame` and refs so React is not re-rendering every audio frame.
 
-## Keyboard Controls
+## Useful URLs
 
-- `LEFT`: previous visualization
-- `RIGHT`: next visualization
-- `SPACE`: random visualization
-- `F`: fullscreen
-- `A`: toggle Smart Shuffle
-- `H`: hide controls
-- `ESC`: browser fullscreen exit
-
-Easter eggs:
-
-- Type `1999`
-- Type `winamp`
-- Konami code: `UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A`
+- `/` - public landing screen
+- `/visualizer` - microphone visualizer
+- `/visualizer?audioTest=1` - simulated audio test mode
+- `/visualizer?debug=1` - diagnostics overlay
+- `/about` - privacy/project notes
 
 ## Browser Notes
 
-Prioritized browsers:
+Best supported:
 
 1. Chrome desktop
 2. Chrome Android
@@ -164,4 +156,4 @@ Prioritized browsers:
 4. Safari desktop
 5. Edge
 
-iOS Safari may not support the same fullscreen behavior as desktop browsers. The visualizer still fills the viewport.
+iOS Safari may not support the same fullscreen API behavior as desktop browsers. The visualizer still fills the viewport.
