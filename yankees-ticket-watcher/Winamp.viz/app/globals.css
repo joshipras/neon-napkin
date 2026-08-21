@@ -191,11 +191,10 @@ select {
 }
 
 .wa-gold-line {
-  height: 9px;
-  border-top: 2px solid #d2a747;
-  border-bottom: 2px solid #3f2608;
-  background: linear-gradient(180deg, #8c5a17, #201409);
-  box-shadow: inset 0 1px #f4ce69;
+  height: 14px;
+  background:
+    linear-gradient(180deg, transparent 0 2px, #f1c45a 2px 3px, #9b661b 3px 5px, #2a1705 5px 6px, transparent 6px 8px, #d99e37 8px 9px, #6f4310 9px 11px, #160c04 11px 12px, transparent 12px 100%);
+  box-shadow: inset 0 1px rgba(255, 228, 135, 0.18);
 }
 
 .wa-strip-icon,
@@ -383,8 +382,8 @@ select {
 
 .wa-track-row {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) clamp(86px, 7vw, 120px) clamp(80px, 6vw, 110px) clamp(84px, 8vw, 132px);
-  gap: clamp(8px, 0.9vw, 16px);
+  grid-template-columns: minmax(420px, 1fr) clamp(72px, 5.2vw, 96px) clamp(68px, 4.8vw, 88px) clamp(118px, 7.5vw, 144px);
+  gap: clamp(5px, 0.55vw, 10px);
   align-items: stretch;
 }
 
@@ -422,17 +421,22 @@ select {
   grid-template-rows: 1fr auto;
   align-items: center;
   justify-items: center;
-  padding: 4px 5px;
+  padding: 5px 4px 6px;
 }
 
 .wa-meta-box strong {
   color: #31ff0e;
-  font-size: clamp(24px, 3vw, 48px);
+  font-size: clamp(24px, 2.7vw, 42px);
   line-height: 0.95;
   text-shadow: 0 0 8px #31ff0e;
 }
 
-.wa-meta-box span,
+.wa-meta-box span {
+  color: #d8dcdf;
+  font-size: clamp(10px, 0.95vw, 14px);
+  text-shadow: 1px 1px #000;
+}
+
 .wa-stereo .muted {
   color: #c8c8c8;
   font-size: clamp(11px, 1.1vw, 16px);
@@ -440,12 +444,13 @@ select {
 
 .wa-stereo {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding-left: 12px;
+  gap: clamp(8px, 0.7vw, 12px);
+  padding-left: 4px;
   text-transform: lowercase;
-  font-size: clamp(14px, 1.6vw, 22px);
+  font-size: clamp(13px, 1.35vw, 19px);
 }
 
 .wa-stereo .active {
@@ -462,18 +467,18 @@ select {
 
 .wa-slider {
   position: relative;
-  height: 30px;
+  height: 42px;
 }
 
 .wa-slider-track {
   position: absolute;
   left: 0;
   right: 0;
-  top: 13px;
-  height: 8px;
+  top: 14px;
+  height: 14px;
   background: #090b0d;
   border: 2px solid #030405;
-  box-shadow: inset 1px 1px #000, inset -1px -1px #67717a;
+  box-shadow: inset 2px 2px #000, inset -2px -2px #67717a;
 }
 
 .wa-slider-track span {
@@ -491,20 +496,24 @@ select {
 
 .wa-slider-thumb {
   position: absolute;
-  top: 3px;
-  width: 24px;
-  height: 28px;
+  top: 4px;
+  width: 32px;
+  height: 34px;
   transform: translateX(-50%);
   background: linear-gradient(90deg, #d8dcdf, #7f868c);
   border: 2px solid #050607;
   box-shadow: inset 2px 2px #fff, inset -2px -2px #53575a;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding-top: 7px;
 }
 
 .wa-slider-thumb i {
   display: block;
-  width: 4px;
-  height: 18px;
-  margin: 4px auto 0;
+  width: 3px;
+  height: 20px;
+  margin: 0;
   background: #0a0c0e;
 }
 
@@ -569,74 +578,56 @@ select {
 .wa-left-transport {
   grid-column: 1 / -1;
   align-self: end;
-  justify-content: center;
+  justify-content: flex-start;
   padding-top: 2px;
+  padding-left: clamp(76px, 9vw, 118px);
+  position: relative;
+  z-index: 2;
 }
 
-.wa-brand-badge {
+.wa-decor-panel {
   align-self: stretch;
   min-height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  justify-items: center;
   position: relative;
   overflow: hidden;
   color: #d8dcdf;
   background: #020503;
   border: 3px solid #050708;
   box-shadow: inset 2px 2px #000, inset -2px -2px #243424;
-  font-size: clamp(14px, 1.35vw, 22px);
+  padding: clamp(9px, 1svh, 14px) clamp(14px, 1.2vw, 22px);
+  font-size: clamp(9px, 0.75vw, 12px);
   font-weight: 900;
   text-shadow: 2px 2px #000;
 }
 
-.wa-badge-bars {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(90deg, #0c300a 0 18px, #041204 18px 22px);
-  opacity: 0.92;
-}
-
-.wa-badge-readout {
-  position: relative;
-  z-index: 1;
+.wa-decor-lamps {
   display: grid;
-  width: min(92%, 620px);
-  grid-template-rows: auto auto auto;
-  gap: 6px;
-  justify-items: center;
+  width: min(88%, 560px);
+  grid-template-columns: repeat(34, 1fr);
+  gap: 5px;
+  align-self: center;
 }
 
-.wa-badge-title {
-  color: #d9e2df;
-  line-height: 1;
-}
-
-.wa-badge-ledrow {
-  display: grid;
-  width: 100%;
-  grid-template-columns: repeat(28, 1fr);
-  gap: 4px;
-}
-
-.wa-badge-ledrow i {
-  height: 7px;
-  background: #06160a;
+.wa-decor-lamps i {
+  height: 8px;
+  background: #031006;
   border-top: 1px solid #18311d;
 }
 
-.wa-badge-ledrow i.on {
+.wa-decor-lamps i.on {
   background: #2eff0b;
-  box-shadow: 0 0 5px #2eff0b;
+  box-shadow: 0 0 4px #2eff0b;
 }
 
-.wa-badge-small {
-  color: #32ff10;
-  font-size: clamp(9px, 0.75vw, 12px);
+.wa-decor-label {
+  color: #86a485;
+  letter-spacing: 0;
   font-weight: 700;
-  text-shadow: 0 0 7px #32ff10;
+  text-shadow: 1px 1px #000;
 }
 
 .wa-wide {

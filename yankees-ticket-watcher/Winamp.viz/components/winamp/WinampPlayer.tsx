@@ -91,17 +91,13 @@ const WinampPlayer = forwardRef<MiniSpectrumHandle, WinampPlayerProps>(function 
           </div>
 
           <div className="wa-bottom-row">
-            <div className="wa-brand-badge">
-              <span className="wa-badge-bars" style={{ width: `${Math.round(24 + volume * 46)}%` }} />
-              <div className="wa-badge-readout">
-                <span className="wa-badge-title">VISUALIZE.FM</span>
-                <div className="wa-badge-ledrow" aria-hidden>
-                  {Array.from({ length: 28 }).map((_, index) => (
-                    <i className={index / 28 < 0.24 + volume * 0.66 ? "on" : ""} key={index} />
-                  ))}
-                </div>
-                <span className="wa-badge-small">LIVE INPUT · 44.1 KHZ · STEREO</span>
+            <div className="wa-decor-panel">
+              <div className="wa-decor-lamps" aria-hidden>
+                {Array.from({ length: 34 }).map((_, index) => (
+                  <i className={index / 34 < 0.18 + volume * 0.7 ? "on" : ""} key={index} />
+                ))}
               </div>
+              <span className="wa-decor-label">LIVE INPUT · MIC · FFT</span>
             </div>
             <div className="wa-toggle-cluster">
               <WinampButton className="wa-wide">
@@ -151,6 +147,8 @@ function WinampSlider({ color, value, label }: { color: "red" | "green"; value: 
         <span style={{ width: `${Math.round(value * 100)}%` }} />
       </div>
       <div className="wa-slider-thumb" style={{ left: `${Math.round(value * 100)}%` }}>
+        <i />
+        <i />
         <i />
       </div>
     </div>
