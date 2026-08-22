@@ -1,6 +1,6 @@
 # Visualize.fm
 
-Visualize.fm is a browser-based retro audio visualizer built for the specific feeling of a late-90s desktop music player blown up onto a TV. Open it, allow the microphone, play music in the room, and the screen turns into a dense Winamp-era spectrum analyzer with segmented green/yellow/orange bars, falling peak markers, metallic controls, tiny LED displays, and an unapologetically mechanical interface.
+Visualize.fm is a browser-based retro audio visualizer built for the specific feeling of a late-90s desktop visualizer blown up onto a TV. Open it, allow the microphone, play music or sing nearby from another source, and the screen turns into a dense Winamp-era spectrum analyzer with segmented green/yellow/orange bars, falling peak markers, metallic controls, tiny LED displays, and an unapologetically mechanical interface.
 
 Live app: https://visualize-fm-winamp.vercel.app
 
@@ -34,7 +34,7 @@ Until then, the generated Open Graph preview and live app show the intended blac
 1. Visit the site.
 2. Click `START VISUALIZER`.
 3. Allow microphone access.
-4. Play music, sing, clap, or talk near the mic.
+4. Play music, sing, clap, or talk near the mic from another source.
 5. Go fullscreen for TV/projector use.
 
 The app does not require an account, database, or paid service for the normal microphone visualizer.

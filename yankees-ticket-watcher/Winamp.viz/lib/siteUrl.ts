@@ -1,7 +1,7 @@
 export const siteTitle = "Retro Audio Visualizer — Turn Any Room Into 1999";
 
 export const siteDescription =
-  "A free browser-based retro music visualizer. Turn on your microphone, play some music and enjoy a classic late-90s spectrum analyzer.";
+  "A retro microphone-reactive music visualizer for karaoke, parties and TVs. Play music nearby, turn on your mic and bring the Winamp nostalgia to any screen.";
 
 export function getSiteUrl() {
   const explicitUrl = process.env.NEXT_PUBLIC_SITE_URL;

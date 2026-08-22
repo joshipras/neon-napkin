@@ -1,7 +1,7 @@
 {
   "name": "Visualize.fm",
   "short_name": "Visualize.fm",
-  "description": "Retro music visualizer for karaoke, parties, living rooms, and TVs.",
+  "description": "Retro microphone-reactive visualizer for karaoke, parties, living rooms, and TVs.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#030406",

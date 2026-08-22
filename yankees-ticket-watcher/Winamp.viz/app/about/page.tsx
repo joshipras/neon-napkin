@@ -16,11 +16,20 @@ export default function AboutPage() {
         </h1>
         <div className="mt-8 space-y-6 text-base leading-8 text-white/80">
           <p>
-            Visualize.fm is a fullscreen retro music visualizer for parties,
-            karaoke, bars, living rooms, and TVs. It listens through your browser
-            microphone and turns volume, frequency bands, waveforms, and beats
-            into reactive visuals.
+            Visualize.fm is a fullscreen retro microphone-reactive visualizer for
+            parties, karaoke, bars, living rooms, and TVs.
           </p>
+          <div>
+            <h2 className="text-xl font-black uppercase text-[#39ff14]">
+              How it works
+            </h2>
+            <p className="mt-2">
+              Play music or sing karaoke from any source. Visualize.fm listens to
+              the sound around you through your microphone and converts it into a
+              live retro spectrum display. No music is provided or played by the
+              site.
+            </p>
+          </div>
           <p>
             Local microphone mode analyzes audio with the Web Audio API in your
             browser. The microphone signal is never played through speakers,
